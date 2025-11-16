@@ -31,6 +31,9 @@ public static final String IF = "IF";
 /** Represents an else statement */
 public static final String ELSE = "ELSE";
 
+/** Represents a choice node */
+public static final String CHOICE = "CHOICE";
+
 /** Represents a switch statement */
 public static final String SWITCH = "SWITCH";
 
@@ -61,6 +64,7 @@ add(FOR);
 add(GOTO);
 add(IF);
 add(ELSE);
+add(CHOICE);
 add(SWITCH);
 add(TRY);
 add(THROW);

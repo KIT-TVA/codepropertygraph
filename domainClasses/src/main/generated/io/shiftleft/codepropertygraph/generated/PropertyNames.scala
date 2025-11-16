@@ -232,6 +232,9 @@ object PropertyNames {
     */
   val PossibleTypes: String = "POSSIBLE_TYPES"
 
+  /** Used to annotate edges with presence conditions to represent variability */
+  val PresenceCondition: String = "PRESENCE_CONDITION"
+
   /** The path to the root directory of the source/binary this CPG is generated from. */
   val Root: String = "ROOT"
 

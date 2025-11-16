@@ -51,6 +51,18 @@ object Base extends SchemaBase {
       .mandatory(PropertyDefaults.String)
       .protoId(ProtoIds.Code)
 
+
+    val presenceCondition = builder
+      .addProperty(
+        name = "PRESENCE_CONDITION",
+        valueType = ValueType.String,
+        comment =
+          """ Marks outgoing edges with their presence conditions for variability, encoded in a string
+            |""".stripMargin
+      )
+      .mandatory(PropertyDefaults.String)
+      .protoId(ProtoIds.PresenceCondition)
+
     val isExternal = builder
       .addProperty(
         name = "IS_EXTERNAL",

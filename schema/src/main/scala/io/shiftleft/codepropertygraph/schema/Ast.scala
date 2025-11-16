@@ -363,6 +363,8 @@ object Ast extends SchemaBase {
         .protoId(ProtoIds.If),
       Constant(name = "ELSE", value = "ELSE", valueType = ValueType.String, comment = "Represents an else statement")
         .protoId(ProtoIds.Else),
+      Constant(name = "CHOICE", value = "CHOICE", valueType = ValueType.String, comment = "Represents a choice node")
+        .protoId(ProtoIds.Choice),
       Constant(
         name = "SWITCH",
         value = "SWITCH",

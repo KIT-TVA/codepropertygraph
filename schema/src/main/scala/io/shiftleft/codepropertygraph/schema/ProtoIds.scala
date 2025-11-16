@@ -146,6 +146,8 @@ object ProtoIds {
   val Dominate                  = 181
   val PostDominate              = 182
   val Cdg                       = 183
+  val Choice = 200
+  val PresenceCondition = 204
   val TagNodePair               = 208
   val Finding                   = 214
   val KeyValuePair              = 217

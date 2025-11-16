@@ -281,7 +281,8 @@ object GraphSchema extends flatgraph.Schema {
     "TYPE_DECL_FULL_NAME",
     "TYPE_FULL_NAME",
     "VALUE",
-    "VERSION"
+    "VERSION",
+    "PRESENCE_CONDITION"
   )
   val nodePropertyByLabel = normalNodePropertyNames.zipWithIndex.toMap
     .updated("evidence", 51)
