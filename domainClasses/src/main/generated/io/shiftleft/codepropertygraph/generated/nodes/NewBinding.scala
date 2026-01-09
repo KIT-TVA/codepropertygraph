@@ -108,7 +108,7 @@ class NewBinding extends NewNode(nodeKind = 5) with BindingBase {
   override def countAndVisitProperties(interface: flatgraph.BatchedUpdateInterface): Unit = {
     interface.countProperty(this, 35, 1)
     interface.countProperty(this, 37, 1)
-    interface.countProperty(this, 45, 1)
+    interface.countProperty(this, 46, 1)
   }
 
   override def copy: this.type = {

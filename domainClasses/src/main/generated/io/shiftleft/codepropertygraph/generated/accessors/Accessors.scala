@@ -298,11 +298,20 @@ object Accessors {
     def possibleTypes: IndexedSeq[String] = flatgraph.Accessors
       .getNodePropertyMulti[String](node.graph, nodeKind = node.nodeKind, propertyKind = 43, seq = node.seq)
   }
+  final class AccessPropertyPresenceCondition(val node: nodes.StoredNode) extends AnyVal {
+    def presenceCondition: String = flatgraph.Accessors.getNodePropertySingle(
+      node.graph,
+      nodeKind = node.nodeKind,
+      propertyKind = 44,
+      seq = node.seq(),
+      default = "<empty>": String
+    )
+  }
   final class AccessPropertyRoot(val node: nodes.StoredNode) extends AnyVal {
     def root: String = flatgraph.Accessors.getNodePropertySingle(
       node.graph,
       nodeKind = node.nodeKind,
-      propertyKind = 44,
+      propertyKind = 45,
       seq = node.seq(),
       default = "<empty>": String
     )
@@ -311,20 +320,20 @@ object Accessors {
     def signature: String = flatgraph.Accessors.getNodePropertySingle(
       node.graph,
       nodeKind = node.nodeKind,
-      propertyKind = 45,
+      propertyKind = 46,
       seq = node.seq(),
       default = "": String
     )
   }
   final class AccessPropertyStaticReceiver(val node: nodes.StoredNode) extends AnyVal {
     def staticReceiver: Option[String] = flatgraph.Accessors
-      .getNodePropertyOption[String](node.graph, nodeKind = node.nodeKind, propertyKind = 46, seq = node.seq)
+      .getNodePropertyOption[String](node.graph, nodeKind = node.nodeKind, propertyKind = 47, seq = node.seq)
   }
   final class AccessPropertyTypeDeclFullName(val node: nodes.StoredNode) extends AnyVal {
     def typeDeclFullName: String = flatgraph.Accessors.getNodePropertySingle(
       node.graph,
       nodeKind = node.nodeKind,
-      propertyKind = 47,
+      propertyKind = 48,
       seq = node.seq(),
       default = "<empty>": String
     )
@@ -333,7 +342,7 @@ object Accessors {
     def typeFullName: String = flatgraph.Accessors.getNodePropertySingle(
       node.graph,
       nodeKind = node.nodeKind,
-      propertyKind = 48,
+      propertyKind = 49,
       seq = node.seq(),
       default = "<empty>": String
     )
@@ -342,7 +351,7 @@ object Accessors {
     def value: String = flatgraph.Accessors.getNodePropertySingle(
       node.graph,
       nodeKind = node.nodeKind,
-      propertyKind = 49,
+      propertyKind = 50,
       seq = node.seq(),
       default = "": String
     )
@@ -351,7 +360,7 @@ object Accessors {
     def version: String = flatgraph.Accessors.getNodePropertySingle(
       node.graph,
       nodeKind = node.nodeKind,
-      propertyKind = 50,
+      propertyKind = 51,
       seq = node.seq(),
       default = "<empty>": String
     )
@@ -466,6 +475,10 @@ object Accessors {
     def parserTypeName: String = node match {
       case stored: nodes.StoredNode           => new AccessPropertyParserTypeName(stored).parserTypeName
       case newNode: nodes.NewControlStructure => newNode.parserTypeName
+    }
+    def presenceCondition: String = node match {
+      case stored: nodes.StoredNode           => new AccessPropertyPresenceCondition(stored).presenceCondition
+      case newNode: nodes.NewControlStructure => newNode.presenceCondition
     }
   }
   final class AccessDependencyBase(val node: nodes.DependencyBase) extends AnyVal {
@@ -1115,6 +1128,9 @@ trait ConcreteStoredConversions extends ConcreteBaseConversions {
   implicit def accessPropertyPossibleTypes(
     node: nodes.StoredNode & nodes.StaticType[nodes.HasPossibleTypesEMT]
   ): AccessPropertyPossibleTypes = new AccessPropertyPossibleTypes(node)
+  implicit def accessPropertyPresenceCondition(
+    node: nodes.StoredNode & nodes.StaticType[nodes.HasPresenceConditionEMT]
+  ): AccessPropertyPresenceCondition = new AccessPropertyPresenceCondition(node)
   implicit def accessPropertyRoot(node: nodes.StoredNode & nodes.StaticType[nodes.HasRootEMT]): AccessPropertyRoot =
     new AccessPropertyRoot(node)
   implicit def accessPropertySignature(

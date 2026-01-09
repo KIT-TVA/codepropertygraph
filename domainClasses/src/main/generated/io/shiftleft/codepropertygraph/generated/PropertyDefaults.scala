@@ -24,6 +24,7 @@ object PropertyDefaults {
   val Name                 = "<empty>"
   val Order                = -1: Int
   val ParserTypeName       = "<empty>"
+  val PresenceCondition    = "<empty>"
   val Root                 = "<empty>"
   val Signature            = ""
   val TypeDeclFullName     = "<empty>"

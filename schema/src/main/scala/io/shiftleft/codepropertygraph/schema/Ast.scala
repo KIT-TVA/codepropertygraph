@@ -406,7 +406,7 @@ object Ast extends SchemaBase {
             |""".stripMargin
       )
       .protoId(ProtoIds.ControlStructure)
-      .addProperties(parserTypeName, controlStructureType)
+      .addProperties(parserTypeName, controlStructureType, presenceCondition)
 
     val unknown: NodeType = builder
       .addNodeType(

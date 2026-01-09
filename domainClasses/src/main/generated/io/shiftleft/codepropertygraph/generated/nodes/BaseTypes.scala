@@ -324,6 +324,11 @@ trait HasParserTypeNameEMT
   */
 trait HasPossibleTypesEMT
 
+/** Node types with this marker trait are guaranteed to have the PRESENCE_CONDITION property. EMT stands for: "erased
+  * marker trait", it exists only at compile time in order to improve type safety.
+  */
+trait HasPresenceConditionEMT
+
 /** Node types with this marker trait are guaranteed to have the ROOT property. EMT stands for: "erased marker trait",
   * it exists only at compile time in order to improve type safety.
   */

@@ -191,6 +191,10 @@ package object traversals {
     ](traversal: IterableOnce[NodeType]): TraversalPropertyPossibleTypes[NodeType] = new TraversalPropertyPossibleTypes(
       traversal.iterator
     )
+    implicit def accessPropertyPresenceConditionTraversal[
+      NodeType <: nodes.StoredNode & nodes.StaticType[nodes.HasPresenceConditionEMT]
+    ](traversal: IterableOnce[NodeType]): TraversalPropertyPresenceCondition[NodeType] =
+      new TraversalPropertyPresenceCondition(traversal.iterator)
     implicit def accessPropertyRootTraversal[NodeType <: nodes.StoredNode & nodes.StaticType[nodes.HasRootEMT]](
       traversal: IterableOnce[NodeType]
     ): TraversalPropertyRoot[NodeType] = new TraversalPropertyRoot(traversal.iterator)

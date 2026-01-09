@@ -232,7 +232,7 @@ object PropertyNames {
     */
   val PossibleTypes: String = "POSSIBLE_TYPES"
 
-  /** Used to annotate edges with presence conditions to represent variability */
+  /** Marks outgoing edges with their presence conditions for variability, encoded in a string */
   val PresenceCondition: String = "PRESENCE_CONDITION"
 
   /** The path to the root directory of the source/binary this CPG is generated from. */
@@ -338,6 +338,7 @@ object PropertyNames {
       Overlays,
       ParserTypeName,
       PossibleTypes,
+      PresenceCondition,
       Root,
       SecondaryId,
       Signature,

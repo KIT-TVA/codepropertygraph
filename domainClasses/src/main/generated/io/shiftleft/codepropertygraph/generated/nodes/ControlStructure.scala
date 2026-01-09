@@ -7,7 +7,12 @@ import scala.collection.mutable
 /** Node base type for compiletime-only checks to improve type safety. EMT stands for: "erased marker trait", i.e. it is
   * erased at runtime
   */
-trait ControlStructureEMT extends AnyRef with ExpressionEMT with HasControlStructureTypeEMT with HasParserTypeNameEMT
+trait ControlStructureEMT
+    extends AnyRef
+    with ExpressionEMT
+    with HasControlStructureTypeEMT
+    with HasParserTypeNameEMT
+    with HasPresenceConditionEMT
 
 trait ControlStructureBase extends AbstractNode with ExpressionBase with StaticType[ControlStructureEMT] {
 
@@ -24,6 +29,7 @@ trait ControlStructureBase extends AbstractNode with ExpressionBase with StaticT
     this.offsetEnd.foreach { p => res.put("OFFSET_END", p) }
     if ((-1: Int) != this.order) res.put("ORDER", this.order)
     if (("<empty>": String) != this.parserTypeName) res.put("PARSER_TYPE_NAME", this.parserTypeName)
+    if (("<empty>": String) != this.presenceCondition) res.put("PRESENCE_CONDITION", this.presenceCondition)
     res
   }
 }
@@ -73,6 +79,9 @@ object ControlStructure {
   *
   * ▸ ParserTypeName (String); Cardinality `one` (mandatory with default value `<empty>`); AST node type name emitted by
   * parser.
+  *
+  * ▸ PresenceCondition (String); Cardinality `one` (mandatory with default value `<empty>`); Marks outgoing edges with
+  * their presence conditions for variability, encoded in a string
   */
 class ControlStructure(graph_4762: flatgraph.Graph, seq_4762: Int)
     extends StoredNode(graph_4762, 11, seq_4762)
@@ -82,36 +91,38 @@ class ControlStructure(graph_4762: flatgraph.Graph, seq_4762: Int)
 
   override def productElementName(n: Int): String =
     n match {
-      case 0 => "argumentIndex"
-      case 1 => "argumentName"
-      case 2 => "code"
-      case 3 => "columnNumber"
-      case 4 => "controlStructureType"
-      case 5 => "lineNumber"
-      case 6 => "offset"
-      case 7 => "offsetEnd"
-      case 8 => "order"
-      case 9 => "parserTypeName"
-      case _ => ""
+      case 0  => "argumentIndex"
+      case 1  => "argumentName"
+      case 2  => "code"
+      case 3  => "columnNumber"
+      case 4  => "controlStructureType"
+      case 5  => "lineNumber"
+      case 6  => "offset"
+      case 7  => "offsetEnd"
+      case 8  => "order"
+      case 9  => "parserTypeName"
+      case 10 => "presenceCondition"
+      case _  => ""
     }
 
   override def productElement(n: Int): Any =
     n match {
-      case 0 => this.argumentIndex
-      case 1 => this.argumentName
-      case 2 => this.code
-      case 3 => this.columnNumber
-      case 4 => this.controlStructureType
-      case 5 => this.lineNumber
-      case 6 => this.offset
-      case 7 => this.offsetEnd
-      case 8 => this.order
-      case 9 => this.parserTypeName
-      case _ => null
+      case 0  => this.argumentIndex
+      case 1  => this.argumentName
+      case 2  => this.code
+      case 3  => this.columnNumber
+      case 4  => this.controlStructureType
+      case 5  => this.lineNumber
+      case 6  => this.offset
+      case 7  => this.offsetEnd
+      case 8  => this.order
+      case 9  => this.parserTypeName
+      case 10 => this.presenceCondition
+      case _  => null
     }
 
   override def productPrefix = "ControlStructure"
-  override def productArity  = 10
+  override def productArity  = 11
 
   override def canEqual(that: Any): Boolean = that != null && that.isInstanceOf[ControlStructure]
 }

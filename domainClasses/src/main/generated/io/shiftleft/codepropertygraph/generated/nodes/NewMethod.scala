@@ -1766,7 +1766,7 @@ class NewMethod extends NewNode(nodeKind = 25) with MethodBase with AstNodeNew w
     interface.countProperty(this, 38, offset.size)
     interface.countProperty(this, 39, offsetEnd.size)
     interface.countProperty(this, 40, 1)
-    interface.countProperty(this, 45, 1)
+    interface.countProperty(this, 46, 1)
   }
 
   override def copy: this.type = {

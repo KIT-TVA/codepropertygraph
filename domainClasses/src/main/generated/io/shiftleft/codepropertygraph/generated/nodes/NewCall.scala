@@ -1737,9 +1737,9 @@ class NewCall extends NewNode(nodeKind = 7) with CallBase with CallReprNew with 
     interface.countProperty(this, 39, offsetEnd.size)
     interface.countProperty(this, 40, 1)
     interface.countProperty(this, 43, possibleTypes.size)
-    interface.countProperty(this, 45, 1)
-    interface.countProperty(this, 46, staticReceiver.size)
-    interface.countProperty(this, 48, 1)
+    interface.countProperty(this, 46, 1)
+    interface.countProperty(this, 47, staticReceiver.size)
+    interface.countProperty(this, 49, 1)
   }
 
   override def copy: this.type = {
