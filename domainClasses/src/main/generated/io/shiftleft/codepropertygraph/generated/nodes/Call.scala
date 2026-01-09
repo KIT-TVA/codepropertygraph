@@ -38,6 +38,7 @@ trait CallBase extends AbstractNode with CallReprBase with ExpressionBase with S
     if ((-1: Int) != this.order) res.put("ORDER", this.order)
     val tmpPossibleTypes = this.possibleTypes;
     if (tmpPossibleTypes.nonEmpty) res.put("POSSIBLE_TYPES", tmpPossibleTypes)
+    if (("<empty>": String) != this.presenceCondition) res.put("PRESENCE_CONDITION", this.presenceCondition)
     if (("": String) != this.signature) res.put("SIGNATURE", this.signature)
     this.staticReceiver.foreach { p => res.put("STATIC_RECEIVER", p) }
     if (("<empty>": String) != this.typeFullName) res.put("TYPE_FULL_NAME", this.typeFullName)
@@ -102,6 +103,9 @@ object Call {
   * no guarantee that types within this property are correct. This property is used to capture observations between node
   * interactions during a 'may-analysis'.
   *
+  * ▸ PresenceCondition (String); Cardinality `one` (mandatory with default value `<empty>`); Marks outgoing edges with
+  * their presence conditions for variability, encoded in a string
+  *
   * ▸ Signature (String); Cardinality `one` (mandatory with default value ``); The method signature encodes the types of
   * parameters in a string. The string SHOULD be human readable and suitable for differentiating methods with different
   * parameter types sufficiently to allow for resolving of function overloading. The present specification does not
@@ -141,9 +145,10 @@ class Call(graph_4762: flatgraph.Graph, seq_4762: Int)
       case 10 => "offsetEnd"
       case 11 => "order"
       case 12 => "possibleTypes"
-      case 13 => "signature"
-      case 14 => "staticReceiver"
-      case 15 => "typeFullName"
+      case 13 => "presenceCondition"
+      case 14 => "signature"
+      case 15 => "staticReceiver"
+      case 16 => "typeFullName"
       case _  => ""
     }
 
@@ -162,14 +167,15 @@ class Call(graph_4762: flatgraph.Graph, seq_4762: Int)
       case 10 => this.offsetEnd
       case 11 => this.order
       case 12 => this.possibleTypes
-      case 13 => this.signature
-      case 14 => this.staticReceiver
-      case 15 => this.typeFullName
+      case 13 => this.presenceCondition
+      case 14 => this.signature
+      case 15 => this.staticReceiver
+      case 16 => this.typeFullName
       case _  => null
     }
 
   override def productPrefix = "Call"
-  override def productArity  = 16
+  override def productArity  = 17
 
   override def canEqual(that: Any): Boolean = that != null && that.isInstanceOf[Call]
 }

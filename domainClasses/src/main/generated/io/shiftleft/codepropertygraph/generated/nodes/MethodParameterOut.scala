@@ -35,6 +35,7 @@ trait MethodParameterOutBase
     this.offset.foreach { p => res.put("OFFSET", p) }
     this.offsetEnd.foreach { p => res.put("OFFSET_END", p) }
     if ((-1: Int) != this.order) res.put("ORDER", this.order)
+    if (("<empty>": String) != this.presenceCondition) res.put("PRESENCE_CONDITION", this.presenceCondition)
     if (("<empty>": String) != this.typeFullName) res.put("TYPE_FULL_NAME", this.typeFullName)
     res
   }
@@ -85,6 +86,9 @@ object MethodParameterOut {
   * ▸ Order (Int); Cardinality `one` (mandatory with default value `-1`); This integer indicates the position of the
   * node among its siblings in the AST. The left-most child has an order of 0.
   *
+  * ▸ PresenceCondition (String); Cardinality `one` (mandatory with default value `<empty>`); Marks outgoing edges with
+  * their presence conditions for variability, encoded in a string
+  *
   * ▸ TypeFullName (String); Cardinality `one` (mandatory with default value `<empty>`); This field contains the
   * fully-qualified static type name of the program construct represented by a node. It is the name of an instantiated
   * type, e.g., `java.util.List<Integer>`, rather than `java.util.List[T]`. If the type cannot be determined, this field
@@ -109,7 +113,8 @@ class MethodParameterOut(graph_4762: flatgraph.Graph, seq_4762: Int)
       case 7  => "offset"
       case 8  => "offsetEnd"
       case 9  => "order"
-      case 10 => "typeFullName"
+      case 10 => "presenceCondition"
+      case 11 => "typeFullName"
       case _  => ""
     }
 
@@ -125,12 +130,13 @@ class MethodParameterOut(graph_4762: flatgraph.Graph, seq_4762: Int)
       case 7  => this.offset
       case 8  => this.offsetEnd
       case 9  => this.order
-      case 10 => this.typeFullName
+      case 10 => this.presenceCondition
+      case 11 => this.typeFullName
       case _  => null
     }
 
   override def productPrefix = "MethodParameterOut"
-  override def productArity  = 11
+  override def productArity  = 12
 
   override def canEqual(that: Any): Boolean = that != null && that.isInstanceOf[MethodParameterOut]
 }

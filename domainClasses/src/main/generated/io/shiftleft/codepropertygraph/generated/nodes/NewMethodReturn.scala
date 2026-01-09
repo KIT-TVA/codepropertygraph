@@ -1486,6 +1486,31 @@ object NewMethodReturn {
         }
       }
     }
+    object NewNodeInserter_MethodReturn_presenceCondition extends flatgraph.NewNodePropertyInsertionHelper {
+      override def insertNewNodeProperties(
+        newNodes: mutable.ArrayBuffer[flatgraph.DNode],
+        dst: AnyRef,
+        offsets: Array[Int]
+      ): Unit = {
+        if (newNodes.isEmpty) return
+        val dstCast = dst.asInstanceOf[Array[String]]
+        val seq     = newNodes.head.storedRef.get.seq()
+        var offset  = offsets(seq)
+        var idx     = 0
+        while (idx < newNodes.length) {
+          val nn = newNodes(idx)
+          nn match {
+            case generated: NewMethodReturn =>
+              dstCast(offset) = generated.presenceCondition
+              offset += 1
+            case _ =>
+          }
+          assert(seq + idx == nn.storedRef.get.seq(), "internal consistency check")
+          idx += 1
+          offsets(idx + seq) = offset
+        }
+      }
+    }
     object NewNodeInserter_MethodReturn_typeFullName extends flatgraph.NewNodePropertyInsertionHelper {
       override def insertNewNodeProperties(
         newNodes: mutable.ArrayBuffer[flatgraph.DNode],
@@ -1534,6 +1559,7 @@ class NewMethodReturn extends NewNode(nodeKind = 29) with MethodReturnBase with 
   var offsetEnd: Option[Int]                      = None
   var order: Int                                  = -1: Int
   var possibleTypes: IndexedSeq[String]           = ArraySeq.empty
+  var presenceCondition: String                   = "<empty>": String
   var typeFullName: String                        = "<empty>": String
   def code(value: String): this.type              = { this.code = value; this }
   def columnNumber(value: Int): this.type         = { this.columnNumber = Option(value); this }
@@ -1550,6 +1576,7 @@ class NewMethodReturn extends NewNode(nodeKind = 29) with MethodReturnBase with 
   def offsetEnd(value: Option[Int]): this.type              = { this.offsetEnd = value; this }
   def order(value: Int): this.type                          = { this.order = value; this }
   def possibleTypes(value: IterableOnce[String]): this.type = { this.possibleTypes = value.iterator.to(ArraySeq); this }
+  def presenceCondition(value: String): this.type           = { this.presenceCondition = value; this }
   def typeFullName(value: String): this.type                = { this.typeFullName = value; this }
   override def countAndVisitProperties(interface: flatgraph.BatchedUpdateInterface): Unit = {
     interface.countProperty(this, 7, 1)
@@ -1561,6 +1588,7 @@ class NewMethodReturn extends NewNode(nodeKind = 29) with MethodReturnBase with 
     interface.countProperty(this, 39, offsetEnd.size)
     interface.countProperty(this, 40, 1)
     interface.countProperty(this, 43, possibleTypes.size)
+    interface.countProperty(this, 44, 1)
     interface.countProperty(this, 49, 1)
   }
 
@@ -1575,41 +1603,44 @@ class NewMethodReturn extends NewNode(nodeKind = 29) with MethodReturnBase with 
     newInstance.offsetEnd = this.offsetEnd
     newInstance.order = this.order
     newInstance.possibleTypes = this.possibleTypes
+    newInstance.presenceCondition = this.presenceCondition
     newInstance.typeFullName = this.typeFullName
     newInstance.asInstanceOf[this.type]
   }
 
   override def productElementName(n: Int): String =
     n match {
-      case 0 => "code"
-      case 1 => "columnNumber"
-      case 2 => "dynamicTypeHintFullName"
-      case 3 => "evaluationStrategy"
-      case 4 => "lineNumber"
-      case 5 => "offset"
-      case 6 => "offsetEnd"
-      case 7 => "order"
-      case 8 => "possibleTypes"
-      case 9 => "typeFullName"
-      case _ => ""
+      case 0  => "code"
+      case 1  => "columnNumber"
+      case 2  => "dynamicTypeHintFullName"
+      case 3  => "evaluationStrategy"
+      case 4  => "lineNumber"
+      case 5  => "offset"
+      case 6  => "offsetEnd"
+      case 7  => "order"
+      case 8  => "possibleTypes"
+      case 9  => "presenceCondition"
+      case 10 => "typeFullName"
+      case _  => ""
     }
 
   override def productElement(n: Int): Any =
     n match {
-      case 0 => this.code
-      case 1 => this.columnNumber
-      case 2 => this.dynamicTypeHintFullName
-      case 3 => this.evaluationStrategy
-      case 4 => this.lineNumber
-      case 5 => this.offset
-      case 6 => this.offsetEnd
-      case 7 => this.order
-      case 8 => this.possibleTypes
-      case 9 => this.typeFullName
-      case _ => null
+      case 0  => this.code
+      case 1  => this.columnNumber
+      case 2  => this.dynamicTypeHintFullName
+      case 3  => this.evaluationStrategy
+      case 4  => this.lineNumber
+      case 5  => this.offset
+      case 6  => this.offsetEnd
+      case 7  => this.order
+      case 8  => this.possibleTypes
+      case 9  => this.presenceCondition
+      case 10 => this.typeFullName
+      case _  => null
     }
 
   override def productPrefix                = "NewMethodReturn"
-  override def productArity                 = 10
+  override def productArity                 = 11
   override def canEqual(that: Any): Boolean = that != null && that.isInstanceOf[NewMethodReturn]
 }

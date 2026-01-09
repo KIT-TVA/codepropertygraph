@@ -1457,6 +1457,31 @@ object NewJumpLabel {
         }
       }
     }
+    object NewNodeInserter_JumpLabel_presenceCondition extends flatgraph.NewNodePropertyInsertionHelper {
+      override def insertNewNodeProperties(
+        newNodes: mutable.ArrayBuffer[flatgraph.DNode],
+        dst: AnyRef,
+        offsets: Array[Int]
+      ): Unit = {
+        if (newNodes.isEmpty) return
+        val dstCast = dst.asInstanceOf[Array[String]]
+        val seq     = newNodes.head.storedRef.get.seq()
+        var offset  = offsets(seq)
+        var idx     = 0
+        while (idx < newNodes.length) {
+          val nn = newNodes(idx)
+          nn match {
+            case generated: NewJumpLabel =>
+              dstCast(offset) = generated.presenceCondition
+              offset += 1
+            case _ =>
+          }
+          assert(seq + idx == nn.storedRef.get.seq(), "internal consistency check")
+          idx += 1
+          offsets(idx + seq) = offset
+        }
+      }
+    }
   }
 }
 
@@ -1479,6 +1504,7 @@ class NewJumpLabel extends NewNode(nodeKind = 18) with JumpLabelBase with AstNod
   var offsetEnd: Option[Int]                      = None
   var order: Int                                  = -1: Int
   var parserTypeName: String                      = "<empty>": String
+  var presenceCondition: String                   = "<empty>": String
   def code(value: String): this.type              = { this.code = value; this }
   def columnNumber(value: Int): this.type         = { this.columnNumber = Option(value); this }
   def columnNumber(value: Option[Int]): this.type = { this.columnNumber = value; this }
@@ -1491,6 +1517,7 @@ class NewJumpLabel extends NewNode(nodeKind = 18) with JumpLabelBase with AstNod
   def offsetEnd(value: Option[Int]): this.type    = { this.offsetEnd = value; this }
   def order(value: Int): this.type                = { this.order = value; this }
   def parserTypeName(value: String): this.type    = { this.parserTypeName = value; this }
+  def presenceCondition(value: String): this.type = { this.presenceCondition = value; this }
   override def countAndVisitProperties(interface: flatgraph.BatchedUpdateInterface): Unit = {
     interface.countProperty(this, 7, 1)
     interface.countProperty(this, 8, columnNumber.size)
@@ -1500,6 +1527,7 @@ class NewJumpLabel extends NewNode(nodeKind = 18) with JumpLabelBase with AstNod
     interface.countProperty(this, 39, offsetEnd.size)
     interface.countProperty(this, 40, 1)
     interface.countProperty(this, 42, 1)
+    interface.countProperty(this, 44, 1)
   }
 
   override def copy: this.type = {
@@ -1512,6 +1540,7 @@ class NewJumpLabel extends NewNode(nodeKind = 18) with JumpLabelBase with AstNod
     newInstance.offsetEnd = this.offsetEnd
     newInstance.order = this.order
     newInstance.parserTypeName = this.parserTypeName
+    newInstance.presenceCondition = this.presenceCondition
     newInstance.asInstanceOf[this.type]
   }
 
@@ -1525,6 +1554,7 @@ class NewJumpLabel extends NewNode(nodeKind = 18) with JumpLabelBase with AstNod
       case 5 => "offsetEnd"
       case 6 => "order"
       case 7 => "parserTypeName"
+      case 8 => "presenceCondition"
       case _ => ""
     }
 
@@ -1538,10 +1568,11 @@ class NewJumpLabel extends NewNode(nodeKind = 18) with JumpLabelBase with AstNod
       case 5 => this.offsetEnd
       case 6 => this.order
       case 7 => this.parserTypeName
+      case 8 => this.presenceCondition
       case _ => null
     }
 
   override def productPrefix                = "NewJumpLabel"
-  override def productArity                 = 8
+  override def productArity                 = 9
   override def canEqual(that: Any): Boolean = that != null && that.isInstanceOf[NewJumpLabel]
 }

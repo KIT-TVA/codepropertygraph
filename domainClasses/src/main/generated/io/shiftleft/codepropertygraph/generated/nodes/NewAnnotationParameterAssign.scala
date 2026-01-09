@@ -1407,6 +1407,32 @@ object NewAnnotationParameterAssign {
         }
       }
     }
+    object NewNodeInserter_AnnotationParameterAssign_presenceCondition
+        extends flatgraph.NewNodePropertyInsertionHelper {
+      override def insertNewNodeProperties(
+        newNodes: mutable.ArrayBuffer[flatgraph.DNode],
+        dst: AnyRef,
+        offsets: Array[Int]
+      ): Unit = {
+        if (newNodes.isEmpty) return
+        val dstCast = dst.asInstanceOf[Array[String]]
+        val seq     = newNodes.head.storedRef.get.seq()
+        var offset  = offsets(seq)
+        var idx     = 0
+        while (idx < newNodes.length) {
+          val nn = newNodes(idx)
+          nn match {
+            case generated: NewAnnotationParameterAssign =>
+              dstCast(offset) = generated.presenceCondition
+              offset += 1
+            case _ =>
+          }
+          assert(seq + idx == nn.storedRef.get.seq(), "internal consistency check")
+          idx += 1
+          offsets(idx + seq) = offset
+        }
+      }
+    }
   }
 }
 
@@ -1427,6 +1453,7 @@ class NewAnnotationParameterAssign extends NewNode(nodeKind = 3) with Annotation
   var offset: Option[Int]                         = None
   var offsetEnd: Option[Int]                      = None
   var order: Int                                  = -1: Int
+  var presenceCondition: String                   = "<empty>": String
   def code(value: String): this.type              = { this.code = value; this }
   def columnNumber(value: Int): this.type         = { this.columnNumber = Option(value); this }
   def columnNumber(value: Option[Int]): this.type = { this.columnNumber = value; this }
@@ -1437,6 +1464,7 @@ class NewAnnotationParameterAssign extends NewNode(nodeKind = 3) with Annotation
   def offsetEnd(value: Int): this.type            = { this.offsetEnd = Option(value); this }
   def offsetEnd(value: Option[Int]): this.type    = { this.offsetEnd = value; this }
   def order(value: Int): this.type                = { this.order = value; this }
+  def presenceCondition(value: String): this.type = { this.presenceCondition = value; this }
   override def countAndVisitProperties(interface: flatgraph.BatchedUpdateInterface): Unit = {
     interface.countProperty(this, 7, 1)
     interface.countProperty(this, 8, columnNumber.size)
@@ -1444,6 +1472,7 @@ class NewAnnotationParameterAssign extends NewNode(nodeKind = 3) with Annotation
     interface.countProperty(this, 38, offset.size)
     interface.countProperty(this, 39, offsetEnd.size)
     interface.countProperty(this, 40, 1)
+    interface.countProperty(this, 44, 1)
   }
 
   override def copy: this.type = {
@@ -1454,6 +1483,7 @@ class NewAnnotationParameterAssign extends NewNode(nodeKind = 3) with Annotation
     newInstance.offset = this.offset
     newInstance.offsetEnd = this.offsetEnd
     newInstance.order = this.order
+    newInstance.presenceCondition = this.presenceCondition
     newInstance.asInstanceOf[this.type]
   }
 
@@ -1465,6 +1495,7 @@ class NewAnnotationParameterAssign extends NewNode(nodeKind = 3) with Annotation
       case 3 => "offset"
       case 4 => "offsetEnd"
       case 5 => "order"
+      case 6 => "presenceCondition"
       case _ => ""
     }
 
@@ -1476,10 +1507,11 @@ class NewAnnotationParameterAssign extends NewNode(nodeKind = 3) with Annotation
       case 3 => this.offset
       case 4 => this.offsetEnd
       case 5 => this.order
+      case 6 => this.presenceCondition
       case _ => null
     }
 
   override def productPrefix                = "NewAnnotationParameterAssign"
-  override def productArity                 = 6
+  override def productArity                 = 7
   override def canEqual(that: Any): Boolean = that != null && that.isInstanceOf[NewAnnotationParameterAssign]
 }

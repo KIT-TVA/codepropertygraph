@@ -7,12 +7,7 @@ import scala.collection.mutable
 /** Node base type for compiletime-only checks to improve type safety. EMT stands for: "erased marker trait", i.e. it is
   * erased at runtime
   */
-trait ControlStructureEMT
-    extends AnyRef
-    with ExpressionEMT
-    with HasControlStructureTypeEMT
-    with HasParserTypeNameEMT
-    with HasPresenceConditionEMT
+trait ControlStructureEMT extends AnyRef with ExpressionEMT with HasControlStructureTypeEMT with HasParserTypeNameEMT
 
 trait ControlStructureBase extends AbstractNode with ExpressionBase with StaticType[ControlStructureEMT] {
 

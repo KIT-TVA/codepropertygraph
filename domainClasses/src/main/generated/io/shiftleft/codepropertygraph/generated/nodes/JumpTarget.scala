@@ -23,6 +23,7 @@ trait JumpTargetBase extends AbstractNode with CfgNodeBase with StaticType[JumpT
     this.offsetEnd.foreach { p => res.put("OFFSET_END", p) }
     if ((-1: Int) != this.order) res.put("ORDER", this.order)
     if (("<empty>": String) != this.parserTypeName) res.put("PARSER_TYPE_NAME", this.parserTypeName)
+    if (("<empty>": String) != this.presenceCondition) res.put("PRESENCE_CONDITION", this.presenceCondition)
     res
   }
 }
@@ -67,6 +68,9 @@ object JumpTarget {
   *
   * ▸ ParserTypeName (String); Cardinality `one` (mandatory with default value `<empty>`); AST node type name emitted by
   * parser.
+  *
+  * ▸ PresenceCondition (String); Cardinality `one` (mandatory with default value `<empty>`); Marks outgoing edges with
+  * their presence conditions for variability, encoded in a string
   */
 class JumpTarget(graph_4762: flatgraph.Graph, seq_4762: Int)
     extends StoredNode(graph_4762, 19, seq_4762)
@@ -85,6 +89,7 @@ class JumpTarget(graph_4762: flatgraph.Graph, seq_4762: Int)
       case 6 => "offsetEnd"
       case 7 => "order"
       case 8 => "parserTypeName"
+      case 9 => "presenceCondition"
       case _ => ""
     }
 
@@ -99,11 +104,12 @@ class JumpTarget(graph_4762: flatgraph.Graph, seq_4762: Int)
       case 6 => this.offsetEnd
       case 7 => this.order
       case 8 => this.parserTypeName
+      case 9 => this.presenceCondition
       case _ => null
     }
 
   override def productPrefix = "JumpTarget"
-  override def productArity  = 9
+  override def productArity  = 10
 
   override def canEqual(that: Any): Boolean = that != null && that.isInstanceOf[JumpTarget]
 }

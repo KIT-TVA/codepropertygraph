@@ -1565,6 +1565,31 @@ object NewUnknown {
         }
       }
     }
+    object NewNodeInserter_Unknown_presenceCondition extends flatgraph.NewNodePropertyInsertionHelper {
+      override def insertNewNodeProperties(
+        newNodes: mutable.ArrayBuffer[flatgraph.DNode],
+        dst: AnyRef,
+        offsets: Array[Int]
+      ): Unit = {
+        if (newNodes.isEmpty) return
+        val dstCast = dst.asInstanceOf[Array[String]]
+        val seq     = newNodes.head.storedRef.get.seq()
+        var offset  = offsets(seq)
+        var idx     = 0
+        while (idx < newNodes.length) {
+          val nn = newNodes(idx)
+          nn match {
+            case generated: NewUnknown =>
+              dstCast(offset) = generated.presenceCondition
+              offset += 1
+            case _ =>
+          }
+          assert(seq + idx == nn.storedRef.get.seq(), "internal consistency check")
+          idx += 1
+          offsets(idx + seq) = offset
+        }
+      }
+    }
     object NewNodeInserter_Unknown_typeFullName extends flatgraph.NewNodePropertyInsertionHelper {
       override def insertNewNodeProperties(
         newNodes: mutable.ArrayBuffer[flatgraph.DNode],
@@ -1616,6 +1641,7 @@ class NewUnknown extends NewNode(nodeKind = 42) with UnknownBase with Expression
   var order: Int                                     = -1: Int
   var parserTypeName: String                         = "<empty>": String
   var possibleTypes: IndexedSeq[String]              = ArraySeq.empty
+  var presenceCondition: String                      = "<empty>": String
   var typeFullName: String                           = "<empty>": String
   def argumentIndex(value: Int): this.type           = { this.argumentIndex = value; this }
   def argumentName(value: Option[String]): this.type = { this.argumentName = value; this }
@@ -1636,6 +1662,7 @@ class NewUnknown extends NewNode(nodeKind = 42) with UnknownBase with Expression
   def order(value: Int): this.type                          = { this.order = value; this }
   def parserTypeName(value: String): this.type              = { this.parserTypeName = value; this }
   def possibleTypes(value: IterableOnce[String]): this.type = { this.possibleTypes = value.iterator.to(ArraySeq); this }
+  def presenceCondition(value: String): this.type           = { this.presenceCondition = value; this }
   def typeFullName(value: String): this.type                = { this.typeFullName = value; this }
   override def countAndVisitProperties(interface: flatgraph.BatchedUpdateInterface): Unit = {
     interface.countProperty(this, 1, 1)
@@ -1650,6 +1677,7 @@ class NewUnknown extends NewNode(nodeKind = 42) with UnknownBase with Expression
     interface.countProperty(this, 40, 1)
     interface.countProperty(this, 42, 1)
     interface.countProperty(this, 43, possibleTypes.size)
+    interface.countProperty(this, 44, 1)
     interface.countProperty(this, 49, 1)
   }
 
@@ -1667,6 +1695,7 @@ class NewUnknown extends NewNode(nodeKind = 42) with UnknownBase with Expression
     newInstance.order = this.order
     newInstance.parserTypeName = this.parserTypeName
     newInstance.possibleTypes = this.possibleTypes
+    newInstance.presenceCondition = this.presenceCondition
     newInstance.typeFullName = this.typeFullName
     newInstance.asInstanceOf[this.type]
   }
@@ -1685,7 +1714,8 @@ class NewUnknown extends NewNode(nodeKind = 42) with UnknownBase with Expression
       case 9  => "order"
       case 10 => "parserTypeName"
       case 11 => "possibleTypes"
-      case 12 => "typeFullName"
+      case 12 => "presenceCondition"
+      case 13 => "typeFullName"
       case _  => ""
     }
 
@@ -1703,11 +1733,12 @@ class NewUnknown extends NewNode(nodeKind = 42) with UnknownBase with Expression
       case 9  => this.order
       case 10 => this.parserTypeName
       case 11 => this.possibleTypes
-      case 12 => this.typeFullName
+      case 12 => this.presenceCondition
+      case 13 => this.typeFullName
       case _  => null
     }
 
   override def productPrefix                = "NewUnknown"
-  override def productArity                 = 13
+  override def productArity                 = 14
   override def canEqual(that: Any): Boolean = that != null && that.isInstanceOf[NewUnknown]
 }

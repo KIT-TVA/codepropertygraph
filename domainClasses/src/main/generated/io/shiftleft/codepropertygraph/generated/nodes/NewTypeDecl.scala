@@ -1638,6 +1638,31 @@ object NewTypeDecl {
         }
       }
     }
+    object NewNodeInserter_TypeDecl_presenceCondition extends flatgraph.NewNodePropertyInsertionHelper {
+      override def insertNewNodeProperties(
+        newNodes: mutable.ArrayBuffer[flatgraph.DNode],
+        dst: AnyRef,
+        offsets: Array[Int]
+      ): Unit = {
+        if (newNodes.isEmpty) return
+        val dstCast = dst.asInstanceOf[Array[String]]
+        val seq     = newNodes.head.storedRef.get.seq()
+        var offset  = offsets(seq)
+        var idx     = 0
+        while (idx < newNodes.length) {
+          val nn = newNodes(idx)
+          nn match {
+            case generated: NewTypeDecl =>
+              dstCast(offset) = generated.presenceCondition
+              offset += 1
+            case _ =>
+          }
+          assert(seq + idx == nn.storedRef.get.seq(), "internal consistency check")
+          idx += 1
+          offsets(idx + seq) = offset
+        }
+      }
+    }
   }
 }
 
@@ -1667,6 +1692,7 @@ class NewTypeDecl extends NewNode(nodeKind = 39) with TypeDeclBase with AstNodeN
   var offset: Option[Int]                                 = None
   var offsetEnd: Option[Int]                              = None
   var order: Int                                          = -1: Int
+  var presenceCondition: String                           = "<empty>": String
   def aliasTypeFullName(value: Option[String]): this.type = { this.aliasTypeFullName = value; this }
   def aliasTypeFullName(value: String): this.type         = { this.aliasTypeFullName = Option(value); this }
   def astParentFullName(value: String): this.type         = { this.astParentFullName = value; this }
@@ -1680,15 +1706,16 @@ class NewTypeDecl extends NewNode(nodeKind = 39) with TypeDeclBase with AstNodeN
   def inheritsFromTypeFullName(value: IterableOnce[String]): this.type = {
     this.inheritsFromTypeFullName = value.iterator.to(ArraySeq); this
   }
-  def isExternal(value: Boolean): this.type     = { this.isExternal = value; this }
-  def lineNumber(value: Int): this.type         = { this.lineNumber = Option(value); this }
-  def lineNumber(value: Option[Int]): this.type = { this.lineNumber = value; this }
-  def name(value: String): this.type            = { this.name = value; this }
-  def offset(value: Int): this.type             = { this.offset = Option(value); this }
-  def offset(value: Option[Int]): this.type     = { this.offset = value; this }
-  def offsetEnd(value: Int): this.type          = { this.offsetEnd = Option(value); this }
-  def offsetEnd(value: Option[Int]): this.type  = { this.offsetEnd = value; this }
-  def order(value: Int): this.type              = { this.order = value; this }
+  def isExternal(value: Boolean): this.type       = { this.isExternal = value; this }
+  def lineNumber(value: Int): this.type           = { this.lineNumber = Option(value); this }
+  def lineNumber(value: Option[Int]): this.type   = { this.lineNumber = value; this }
+  def name(value: String): this.type              = { this.name = value; this }
+  def offset(value: Int): this.type               = { this.offset = Option(value); this }
+  def offset(value: Option[Int]): this.type       = { this.offset = value; this }
+  def offsetEnd(value: Int): this.type            = { this.offsetEnd = Option(value); this }
+  def offsetEnd(value: Option[Int]): this.type    = { this.offsetEnd = value; this }
+  def order(value: Int): this.type                = { this.order = value; this }
+  def presenceCondition(value: String): this.type = { this.presenceCondition = value; this }
   override def countAndVisitProperties(interface: flatgraph.BatchedUpdateInterface): Unit = {
     interface.countProperty(this, 0, aliasTypeFullName.size)
     interface.countProperty(this, 3, 1)
@@ -1705,6 +1732,7 @@ class NewTypeDecl extends NewNode(nodeKind = 39) with TypeDeclBase with AstNodeN
     interface.countProperty(this, 38, offset.size)
     interface.countProperty(this, 39, offsetEnd.size)
     interface.countProperty(this, 40, 1)
+    interface.countProperty(this, 44, 1)
   }
 
   override def copy: this.type = {
@@ -1724,6 +1752,7 @@ class NewTypeDecl extends NewNode(nodeKind = 39) with TypeDeclBase with AstNodeN
     newInstance.offset = this.offset
     newInstance.offsetEnd = this.offsetEnd
     newInstance.order = this.order
+    newInstance.presenceCondition = this.presenceCondition
     newInstance.asInstanceOf[this.type]
   }
 
@@ -1744,6 +1773,7 @@ class NewTypeDecl extends NewNode(nodeKind = 39) with TypeDeclBase with AstNodeN
       case 12 => "offset"
       case 13 => "offsetEnd"
       case 14 => "order"
+      case 15 => "presenceCondition"
       case _  => ""
     }
 
@@ -1764,10 +1794,11 @@ class NewTypeDecl extends NewNode(nodeKind = 39) with TypeDeclBase with AstNodeN
       case 12 => this.offset
       case 13 => this.offsetEnd
       case 14 => this.order
+      case 15 => this.presenceCondition
       case _  => null
     }
 
   override def productPrefix                = "NewTypeDecl"
-  override def productArity                 = 15
+  override def productArity                 = 16
   override def canEqual(that: Any): Boolean = that != null && that.isInstanceOf[NewTypeDecl]
 }

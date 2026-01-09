@@ -1511,6 +1511,31 @@ object NewAnnotation {
         }
       }
     }
+    object NewNodeInserter_Annotation_presenceCondition extends flatgraph.NewNodePropertyInsertionHelper {
+      override def insertNewNodeProperties(
+        newNodes: mutable.ArrayBuffer[flatgraph.DNode],
+        dst: AnyRef,
+        offsets: Array[Int]
+      ): Unit = {
+        if (newNodes.isEmpty) return
+        val dstCast = dst.asInstanceOf[Array[String]]
+        val seq     = newNodes.head.storedRef.get.seq()
+        var offset  = offsets(seq)
+        var idx     = 0
+        while (idx < newNodes.length) {
+          val nn = newNodes(idx)
+          nn match {
+            case generated: NewAnnotation =>
+              dstCast(offset) = generated.presenceCondition
+              offset += 1
+            case _ =>
+          }
+          assert(seq + idx == nn.storedRef.get.seq(), "internal consistency check")
+          idx += 1
+          offsets(idx + seq) = offset
+        }
+      }
+    }
   }
 }
 
@@ -1535,6 +1560,7 @@ class NewAnnotation extends NewNode(nodeKind = 0) with AnnotationBase with Expre
   var offset: Option[Int]                            = None
   var offsetEnd: Option[Int]                         = None
   var order: Int                                     = -1: Int
+  var presenceCondition: String                      = "<empty>": String
   def argumentIndex(value: Int): this.type           = { this.argumentIndex = value; this }
   def argumentName(value: Option[String]): this.type = { this.argumentName = value; this }
   def argumentName(value: String): this.type         = { this.argumentName = Option(value); this }
@@ -1550,6 +1576,7 @@ class NewAnnotation extends NewNode(nodeKind = 0) with AnnotationBase with Expre
   def offsetEnd(value: Int): this.type               = { this.offsetEnd = Option(value); this }
   def offsetEnd(value: Option[Int]): this.type       = { this.offsetEnd = value; this }
   def order(value: Int): this.type                   = { this.order = value; this }
+  def presenceCondition(value: String): this.type    = { this.presenceCondition = value; this }
   override def countAndVisitProperties(interface: flatgraph.BatchedUpdateInterface): Unit = {
     interface.countProperty(this, 1, 1)
     interface.countProperty(this, 2, argumentName.size)
@@ -1561,6 +1588,7 @@ class NewAnnotation extends NewNode(nodeKind = 0) with AnnotationBase with Expre
     interface.countProperty(this, 38, offset.size)
     interface.countProperty(this, 39, offsetEnd.size)
     interface.countProperty(this, 40, 1)
+    interface.countProperty(this, 44, 1)
   }
 
   override def copy: this.type = {
@@ -1575,40 +1603,43 @@ class NewAnnotation extends NewNode(nodeKind = 0) with AnnotationBase with Expre
     newInstance.offset = this.offset
     newInstance.offsetEnd = this.offsetEnd
     newInstance.order = this.order
+    newInstance.presenceCondition = this.presenceCondition
     newInstance.asInstanceOf[this.type]
   }
 
   override def productElementName(n: Int): String =
     n match {
-      case 0 => "argumentIndex"
-      case 1 => "argumentName"
-      case 2 => "code"
-      case 3 => "columnNumber"
-      case 4 => "fullName"
-      case 5 => "lineNumber"
-      case 6 => "name"
-      case 7 => "offset"
-      case 8 => "offsetEnd"
-      case 9 => "order"
-      case _ => ""
+      case 0  => "argumentIndex"
+      case 1  => "argumentName"
+      case 2  => "code"
+      case 3  => "columnNumber"
+      case 4  => "fullName"
+      case 5  => "lineNumber"
+      case 6  => "name"
+      case 7  => "offset"
+      case 8  => "offsetEnd"
+      case 9  => "order"
+      case 10 => "presenceCondition"
+      case _  => ""
     }
 
   override def productElement(n: Int): Any =
     n match {
-      case 0 => this.argumentIndex
-      case 1 => this.argumentName
-      case 2 => this.code
-      case 3 => this.columnNumber
-      case 4 => this.fullName
-      case 5 => this.lineNumber
-      case 6 => this.name
-      case 7 => this.offset
-      case 8 => this.offsetEnd
-      case 9 => this.order
-      case _ => null
+      case 0  => this.argumentIndex
+      case 1  => this.argumentName
+      case 2  => this.code
+      case 3  => this.columnNumber
+      case 4  => this.fullName
+      case 5  => this.lineNumber
+      case 6  => this.name
+      case 7  => this.offset
+      case 8  => this.offsetEnd
+      case 9  => this.order
+      case 10 => this.presenceCondition
+      case _  => null
     }
 
   override def productPrefix                = "NewAnnotation"
-  override def productArity                 = 10
+  override def productArity                 = 11
   override def canEqual(that: Any): Boolean = that != null && that.isInstanceOf[NewAnnotation]
 }

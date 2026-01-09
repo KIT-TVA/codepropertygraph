@@ -31,6 +31,7 @@ trait TypeRefBase extends AbstractNode with ExpressionBase with StaticType[TypeR
     if ((-1: Int) != this.order) res.put("ORDER", this.order)
     val tmpPossibleTypes = this.possibleTypes;
     if (tmpPossibleTypes.nonEmpty) res.put("POSSIBLE_TYPES", tmpPossibleTypes)
+    if (("<empty>": String) != this.presenceCondition) res.put("PRESENCE_CONDITION", this.presenceCondition)
     if (("<empty>": String) != this.typeFullName) res.put("TYPE_FULL_NAME", this.typeFullName)
     res
   }
@@ -82,6 +83,9 @@ object TypeRef {
   * no guarantee that types within this property are correct. This property is used to capture observations between node
   * interactions during a 'may-analysis'.
   *
+  * ▸ PresenceCondition (String); Cardinality `one` (mandatory with default value `<empty>`); Marks outgoing edges with
+  * their presence conditions for variability, encoded in a string
+  *
   * ▸ TypeFullName (String); Cardinality `one` (mandatory with default value `<empty>`); This field contains the
   * fully-qualified static type name of the program construct represented by a node. It is the name of an instantiated
   * type, e.g., `java.util.List<Integer>`, rather than `java.util.List[T]`. If the type cannot be determined, this field
@@ -105,7 +109,8 @@ class TypeRef(graph_4762: flatgraph.Graph, seq_4762: Int)
       case 7  => "offsetEnd"
       case 8  => "order"
       case 9  => "possibleTypes"
-      case 10 => "typeFullName"
+      case 10 => "presenceCondition"
+      case 11 => "typeFullName"
       case _  => ""
     }
 
@@ -121,12 +126,13 @@ class TypeRef(graph_4762: flatgraph.Graph, seq_4762: Int)
       case 7  => this.offsetEnd
       case 8  => this.order
       case 9  => this.possibleTypes
-      case 10 => this.typeFullName
+      case 10 => this.presenceCondition
+      case 11 => this.typeFullName
       case _  => null
     }
 
   override def productPrefix = "TypeRef"
-  override def productArity  = 11
+  override def productArity  = 12
 
   override def canEqual(that: Any): Boolean = that != null && that.isInstanceOf[TypeRef]
 }

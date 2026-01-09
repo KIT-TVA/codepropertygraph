@@ -32,6 +32,7 @@ trait ImportBase extends AbstractNode with AstNodeBase with StaticType[ImportEMT
     this.offset.foreach { p => res.put("OFFSET", p) }
     this.offsetEnd.foreach { p => res.put("OFFSET_END", p) }
     if ((-1: Int) != this.order) res.put("ORDER", this.order)
+    if (("<empty>": String) != this.presenceCondition) res.put("PRESENCE_CONDITION", this.presenceCondition)
     res
   }
 }
@@ -83,6 +84,9 @@ object Import {
   *
   * ▸ Order (Int); Cardinality `one` (mandatory with default value `-1`); This integer indicates the position of the
   * node among its siblings in the AST. The left-most child has an order of 0.
+  *
+  * ▸ PresenceCondition (String); Cardinality `one` (mandatory with default value `<empty>`); Marks outgoing edges with
+  * their presence conditions for variability, encoded in a string
   */
 class Import(graph_4762: flatgraph.Graph, seq_4762: Int)
     extends StoredNode(graph_4762, 17, seq_4762)
@@ -103,6 +107,7 @@ class Import(graph_4762: flatgraph.Graph, seq_4762: Int)
       case 8  => "offset"
       case 9  => "offsetEnd"
       case 10 => "order"
+      case 11 => "presenceCondition"
       case _  => ""
     }
 
@@ -119,11 +124,12 @@ class Import(graph_4762: flatgraph.Graph, seq_4762: Int)
       case 8  => this.offset
       case 9  => this.offsetEnd
       case 10 => this.order
+      case 11 => this.presenceCondition
       case _  => null
     }
 
   override def productPrefix = "Import"
-  override def productArity  = 11
+  override def productArity  = 12
 
   override def canEqual(that: Any): Boolean = that != null && that.isInstanceOf[Import]
 }

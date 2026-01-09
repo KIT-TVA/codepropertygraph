@@ -1590,6 +1590,31 @@ object NewMethodParameterIn {
         }
       }
     }
+    object NewNodeInserter_MethodParameterIn_presenceCondition extends flatgraph.NewNodePropertyInsertionHelper {
+      override def insertNewNodeProperties(
+        newNodes: mutable.ArrayBuffer[flatgraph.DNode],
+        dst: AnyRef,
+        offsets: Array[Int]
+      ): Unit = {
+        if (newNodes.isEmpty) return
+        val dstCast = dst.asInstanceOf[Array[String]]
+        val seq     = newNodes.head.storedRef.get.seq()
+        var offset  = offsets(seq)
+        var idx     = 0
+        while (idx < newNodes.length) {
+          val nn = newNodes(idx)
+          nn match {
+            case generated: NewMethodParameterIn =>
+              dstCast(offset) = generated.presenceCondition
+              offset += 1
+            case _ =>
+          }
+          assert(seq + idx == nn.storedRef.get.seq(), "internal consistency check")
+          idx += 1
+          offsets(idx + seq) = offset
+        }
+      }
+    }
     object NewNodeInserter_MethodParameterIn_typeFullName extends flatgraph.NewNodePropertyInsertionHelper {
       override def insertNewNodeProperties(
         newNodes: mutable.ArrayBuffer[flatgraph.DNode],
@@ -1647,6 +1672,7 @@ class NewMethodParameterIn
   var offsetEnd: Option[Int]                             = None
   var order: Int                                         = -1: Int
   var possibleTypes: IndexedSeq[String]                  = ArraySeq.empty
+  var presenceCondition: String                          = "<empty>": String
   var typeFullName: String                               = "<empty>": String
   def closureBindingId(value: Option[String]): this.type = { this.closureBindingId = value; this }
   def closureBindingId(value: String): this.type         = { this.closureBindingId = Option(value); this }
@@ -1668,6 +1694,7 @@ class NewMethodParameterIn
   def offsetEnd(value: Option[Int]): this.type              = { this.offsetEnd = value; this }
   def order(value: Int): this.type                          = { this.order = value; this }
   def possibleTypes(value: IterableOnce[String]): this.type = { this.possibleTypes = value.iterator.to(ArraySeq); this }
+  def presenceCondition(value: String): this.type           = { this.presenceCondition = value; this }
   def typeFullName(value: String): this.type                = { this.typeFullName = value; this }
   override def countAndVisitProperties(interface: flatgraph.BatchedUpdateInterface): Unit = {
     interface.countProperty(this, 6, closureBindingId.size)
@@ -1683,6 +1710,7 @@ class NewMethodParameterIn
     interface.countProperty(this, 39, offsetEnd.size)
     interface.countProperty(this, 40, 1)
     interface.countProperty(this, 43, possibleTypes.size)
+    interface.countProperty(this, 44, 1)
     interface.countProperty(this, 49, 1)
   }
 
@@ -1701,6 +1729,7 @@ class NewMethodParameterIn
     newInstance.offsetEnd = this.offsetEnd
     newInstance.order = this.order
     newInstance.possibleTypes = this.possibleTypes
+    newInstance.presenceCondition = this.presenceCondition
     newInstance.typeFullName = this.typeFullName
     newInstance.asInstanceOf[this.type]
   }
@@ -1720,7 +1749,8 @@ class NewMethodParameterIn
       case 10 => "offsetEnd"
       case 11 => "order"
       case 12 => "possibleTypes"
-      case 13 => "typeFullName"
+      case 13 => "presenceCondition"
+      case 14 => "typeFullName"
       case _  => ""
     }
 
@@ -1739,11 +1769,12 @@ class NewMethodParameterIn
       case 10 => this.offsetEnd
       case 11 => this.order
       case 12 => this.possibleTypes
-      case 13 => this.typeFullName
+      case 13 => this.presenceCondition
+      case 14 => this.typeFullName
       case _  => null
     }
 
   override def productPrefix                = "NewMethodParameterIn"
-  override def productArity                 = 14
+  override def productArity                 = 15
   override def canEqual(that: Any): Boolean = that != null && that.isInstanceOf[NewMethodParameterIn]
 }

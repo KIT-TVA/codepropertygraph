@@ -35,6 +35,7 @@ trait UnknownBase extends AbstractNode with ExpressionBase with StaticType[Unkno
     if (("<empty>": String) != this.parserTypeName) res.put("PARSER_TYPE_NAME", this.parserTypeName)
     val tmpPossibleTypes = this.possibleTypes;
     if (tmpPossibleTypes.nonEmpty) res.put("POSSIBLE_TYPES", tmpPossibleTypes)
+    if (("<empty>": String) != this.presenceCondition) res.put("PRESENCE_CONDITION", this.presenceCondition)
     if (("<empty>": String) != this.typeFullName) res.put("TYPE_FULL_NAME", this.typeFullName)
     res
   }
@@ -93,6 +94,9 @@ object Unknown {
   * no guarantee that types within this property are correct. This property is used to capture observations between node
   * interactions during a 'may-analysis'.
   *
+  * ▸ PresenceCondition (String); Cardinality `one` (mandatory with default value `<empty>`); Marks outgoing edges with
+  * their presence conditions for variability, encoded in a string
+  *
   * ▸ TypeFullName (String); Cardinality `one` (mandatory with default value `<empty>`); This field contains the
   * fully-qualified static type name of the program construct represented by a node. It is the name of an instantiated
   * type, e.g., `java.util.List<Integer>`, rather than `java.util.List[T]`. If the type cannot be determined, this field
@@ -118,7 +122,8 @@ class Unknown(graph_4762: flatgraph.Graph, seq_4762: Int)
       case 9  => "order"
       case 10 => "parserTypeName"
       case 11 => "possibleTypes"
-      case 12 => "typeFullName"
+      case 12 => "presenceCondition"
+      case 13 => "typeFullName"
       case _  => ""
     }
 
@@ -136,12 +141,13 @@ class Unknown(graph_4762: flatgraph.Graph, seq_4762: Int)
       case 9  => this.order
       case 10 => this.parserTypeName
       case 11 => this.possibleTypes
-      case 12 => this.typeFullName
+      case 12 => this.presenceCondition
+      case 13 => this.typeFullName
       case _  => null
     }
 
   override def productPrefix = "Unknown"
-  override def productArity  = 13
+  override def productArity  = 14
 
   override def canEqual(that: Any): Boolean = that != null && that.isInstanceOf[Unknown]
 }

@@ -21,6 +21,7 @@ trait CommentBase extends AbstractNode with AstNodeBase with StaticType[CommentE
     this.offset.foreach { p => res.put("OFFSET", p) }
     this.offsetEnd.foreach { p => res.put("OFFSET_END", p) }
     if ((-1: Int) != this.order) res.put("ORDER", this.order)
+    if (("<empty>": String) != this.presenceCondition) res.put("PRESENCE_CONDITION", this.presenceCondition)
     res
   }
 }
@@ -58,6 +59,9 @@ object Comment {
   *
   * ▸ Order (Int); Cardinality `one` (mandatory with default value `-1`); This integer indicates the position of the
   * node among its siblings in the AST. The left-most child has an order of 0.
+  *
+  * ▸ PresenceCondition (String); Cardinality `one` (mandatory with default value `<empty>`); Marks outgoing edges with
+  * their presence conditions for variability, encoded in a string
   */
 class Comment(graph_4762: flatgraph.Graph, seq_4762: Int)
     extends StoredNode(graph_4762, 9, seq_4762)
@@ -74,6 +78,7 @@ class Comment(graph_4762: flatgraph.Graph, seq_4762: Int)
       case 4 => "offset"
       case 5 => "offsetEnd"
       case 6 => "order"
+      case 7 => "presenceCondition"
       case _ => ""
     }
 
@@ -86,11 +91,12 @@ class Comment(graph_4762: flatgraph.Graph, seq_4762: Int)
       case 4 => this.offset
       case 5 => this.offsetEnd
       case 6 => this.order
+      case 7 => this.presenceCondition
       case _ => null
     }
 
   override def productPrefix = "Comment"
-  override def productArity  = 7
+  override def productArity  = 8
 
   override def canEqual(that: Any): Boolean = that != null && that.isInstanceOf[Comment]
 }

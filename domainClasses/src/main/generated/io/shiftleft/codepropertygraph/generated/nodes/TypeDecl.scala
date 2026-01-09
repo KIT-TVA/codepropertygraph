@@ -41,6 +41,7 @@ trait TypeDeclBase extends AbstractNode with AstNodeBase with StaticType[TypeDec
     this.offset.foreach { p => res.put("OFFSET", p) }
     this.offsetEnd.foreach { p => res.put("OFFSET_END", p) }
     if ((-1: Int) != this.order) res.put("ORDER", this.order)
+    if (("<empty>": String) != this.presenceCondition) res.put("PRESENCE_CONDITION", this.presenceCondition)
     res
   }
 }
@@ -108,6 +109,9 @@ object TypeDecl {
   *
   * ▸ Order (Int); Cardinality `one` (mandatory with default value `-1`); This integer indicates the position of the
   * node among its siblings in the AST. The left-most child has an order of 0.
+  *
+  * ▸ PresenceCondition (String); Cardinality `one` (mandatory with default value `<empty>`); Marks outgoing edges with
+  * their presence conditions for variability, encoded in a string
   */
 class TypeDecl(graph_4762: flatgraph.Graph, seq_4762: Int)
     extends StoredNode(graph_4762, 39, seq_4762)
@@ -132,6 +136,7 @@ class TypeDecl(graph_4762: flatgraph.Graph, seq_4762: Int)
       case 12 => "offset"
       case 13 => "offsetEnd"
       case 14 => "order"
+      case 15 => "presenceCondition"
       case _  => ""
     }
 
@@ -152,11 +157,12 @@ class TypeDecl(graph_4762: flatgraph.Graph, seq_4762: Int)
       case 12 => this.offset
       case 13 => this.offsetEnd
       case 14 => this.order
+      case 15 => this.presenceCondition
       case _  => null
     }
 
   override def productPrefix = "TypeDecl"
-  override def productArity  = 15
+  override def productArity  = 16
 
   override def canEqual(that: Any): Boolean = that != null && that.isInstanceOf[TypeDecl]
 }

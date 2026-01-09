@@ -1486,6 +1486,31 @@ object NewTemplateDom {
         }
       }
     }
+    object NewNodeInserter_TemplateDom_presenceCondition extends flatgraph.NewNodePropertyInsertionHelper {
+      override def insertNewNodeProperties(
+        newNodes: mutable.ArrayBuffer[flatgraph.DNode],
+        dst: AnyRef,
+        offsets: Array[Int]
+      ): Unit = {
+        if (newNodes.isEmpty) return
+        val dstCast = dst.asInstanceOf[Array[String]]
+        val seq     = newNodes.head.storedRef.get.seq()
+        var offset  = offsets(seq)
+        var idx     = 0
+        while (idx < newNodes.length) {
+          val nn = newNodes(idx)
+          nn match {
+            case generated: NewTemplateDom =>
+              dstCast(offset) = generated.presenceCondition
+              offset += 1
+            case _ =>
+          }
+          assert(seq + idx == nn.storedRef.get.seq(), "internal consistency check")
+          idx += 1
+          offsets(idx + seq) = offset
+        }
+      }
+    }
   }
 }
 
@@ -1509,6 +1534,7 @@ class NewTemplateDom extends NewNode(nodeKind = 36) with TemplateDomBase with Ex
   var offset: Option[Int]                            = None
   var offsetEnd: Option[Int]                         = None
   var order: Int                                     = -1: Int
+  var presenceCondition: String                      = "<empty>": String
   def argumentIndex(value: Int): this.type           = { this.argumentIndex = value; this }
   def argumentName(value: Option[String]): this.type = { this.argumentName = value; this }
   def argumentName(value: String): this.type         = { this.argumentName = Option(value); this }
@@ -1523,6 +1549,7 @@ class NewTemplateDom extends NewNode(nodeKind = 36) with TemplateDomBase with Ex
   def offsetEnd(value: Int): this.type               = { this.offsetEnd = Option(value); this }
   def offsetEnd(value: Option[Int]): this.type       = { this.offsetEnd = value; this }
   def order(value: Int): this.type                   = { this.order = value; this }
+  def presenceCondition(value: String): this.type    = { this.presenceCondition = value; this }
   override def countAndVisitProperties(interface: flatgraph.BatchedUpdateInterface): Unit = {
     interface.countProperty(this, 1, 1)
     interface.countProperty(this, 2, argumentName.size)
@@ -1533,6 +1560,7 @@ class NewTemplateDom extends NewNode(nodeKind = 36) with TemplateDomBase with Ex
     interface.countProperty(this, 38, offset.size)
     interface.countProperty(this, 39, offsetEnd.size)
     interface.countProperty(this, 40, 1)
+    interface.countProperty(this, 44, 1)
   }
 
   override def copy: this.type = {
@@ -1546,6 +1574,7 @@ class NewTemplateDom extends NewNode(nodeKind = 36) with TemplateDomBase with Ex
     newInstance.offset = this.offset
     newInstance.offsetEnd = this.offsetEnd
     newInstance.order = this.order
+    newInstance.presenceCondition = this.presenceCondition
     newInstance.asInstanceOf[this.type]
   }
 
@@ -1560,6 +1589,7 @@ class NewTemplateDom extends NewNode(nodeKind = 36) with TemplateDomBase with Ex
       case 6 => "offset"
       case 7 => "offsetEnd"
       case 8 => "order"
+      case 9 => "presenceCondition"
       case _ => ""
     }
 
@@ -1574,10 +1604,11 @@ class NewTemplateDom extends NewNode(nodeKind = 36) with TemplateDomBase with Ex
       case 6 => this.offset
       case 7 => this.offsetEnd
       case 8 => this.order
+      case 9 => this.presenceCondition
       case _ => null
     }
 
   override def productPrefix                = "NewTemplateDom"
-  override def productArity                 = 9
+  override def productArity                 = 10
   override def canEqual(that: Any): Boolean = that != null && that.isInstanceOf[NewTemplateDom]
 }

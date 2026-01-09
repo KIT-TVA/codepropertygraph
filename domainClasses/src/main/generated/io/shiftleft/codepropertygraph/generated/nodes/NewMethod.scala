@@ -1669,6 +1669,31 @@ object NewMethod {
         }
       }
     }
+    object NewNodeInserter_Method_presenceCondition extends flatgraph.NewNodePropertyInsertionHelper {
+      override def insertNewNodeProperties(
+        newNodes: mutable.ArrayBuffer[flatgraph.DNode],
+        dst: AnyRef,
+        offsets: Array[Int]
+      ): Unit = {
+        if (newNodes.isEmpty) return
+        val dstCast = dst.asInstanceOf[Array[String]]
+        val seq     = newNodes.head.storedRef.get.seq()
+        var offset  = offsets(seq)
+        var idx     = 0
+        while (idx < newNodes.length) {
+          val nn = newNodes(idx)
+          nn match {
+            case generated: NewMethod =>
+              dstCast(offset) = generated.presenceCondition
+              offset += 1
+            case _ =>
+          }
+          assert(seq + idx == nn.storedRef.get.seq(), "internal consistency check")
+          idx += 1
+          offsets(idx + seq) = offset
+        }
+      }
+    }
     object NewNodeInserter_Method_signature extends flatgraph.NewNodePropertyInsertionHelper {
       override def insertNewNodeProperties(
         newNodes: mutable.ArrayBuffer[flatgraph.DNode],
@@ -1724,6 +1749,7 @@ class NewMethod extends NewNode(nodeKind = 25) with MethodBase with AstNodeNew w
   var offset: Option[Int]                            = None
   var offsetEnd: Option[Int]                         = None
   var order: Int                                     = -1: Int
+  var presenceCondition: String                      = "<empty>": String
   var signature: String                              = "": String
   def astParentFullName(value: String): this.type    = { this.astParentFullName = value; this }
   def astParentType(value: String): this.type        = { this.astParentType = value; this }
@@ -1748,6 +1774,7 @@ class NewMethod extends NewNode(nodeKind = 25) with MethodBase with AstNodeNew w
   def offsetEnd(value: Int): this.type               = { this.offsetEnd = Option(value); this }
   def offsetEnd(value: Option[Int]): this.type       = { this.offsetEnd = value; this }
   def order(value: Int): this.type                   = { this.order = value; this }
+  def presenceCondition(value: String): this.type    = { this.presenceCondition = value; this }
   def signature(value: String): this.type            = { this.signature = value; this }
   override def countAndVisitProperties(interface: flatgraph.BatchedUpdateInterface): Unit = {
     interface.countProperty(this, 3, 1)
@@ -1766,6 +1793,7 @@ class NewMethod extends NewNode(nodeKind = 25) with MethodBase with AstNodeNew w
     interface.countProperty(this, 38, offset.size)
     interface.countProperty(this, 39, offsetEnd.size)
     interface.countProperty(this, 40, 1)
+    interface.countProperty(this, 44, 1)
     interface.countProperty(this, 46, 1)
   }
 
@@ -1787,6 +1815,7 @@ class NewMethod extends NewNode(nodeKind = 25) with MethodBase with AstNodeNew w
     newInstance.offset = this.offset
     newInstance.offsetEnd = this.offsetEnd
     newInstance.order = this.order
+    newInstance.presenceCondition = this.presenceCondition
     newInstance.signature = this.signature
     newInstance.asInstanceOf[this.type]
   }
@@ -1809,7 +1838,8 @@ class NewMethod extends NewNode(nodeKind = 25) with MethodBase with AstNodeNew w
       case 13 => "offset"
       case 14 => "offsetEnd"
       case 15 => "order"
-      case 16 => "signature"
+      case 16 => "presenceCondition"
+      case 17 => "signature"
       case _  => ""
     }
 
@@ -1831,11 +1861,12 @@ class NewMethod extends NewNode(nodeKind = 25) with MethodBase with AstNodeNew w
       case 13 => this.offset
       case 14 => this.offsetEnd
       case 15 => this.order
-      case 16 => this.signature
+      case 16 => this.presenceCondition
+      case 17 => this.signature
       case _  => null
     }
 
   override def productPrefix                = "NewMethod"
-  override def productArity                 = 17
+  override def productArity                 = 18
   override def canEqual(that: Any): Boolean = that != null && that.isInstanceOf[NewMethod]
 }

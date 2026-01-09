@@ -1540,6 +1540,31 @@ object NewLocal {
         }
       }
     }
+    object NewNodeInserter_Local_presenceCondition extends flatgraph.NewNodePropertyInsertionHelper {
+      override def insertNewNodeProperties(
+        newNodes: mutable.ArrayBuffer[flatgraph.DNode],
+        dst: AnyRef,
+        offsets: Array[Int]
+      ): Unit = {
+        if (newNodes.isEmpty) return
+        val dstCast = dst.asInstanceOf[Array[String]]
+        val seq     = newNodes.head.storedRef.get.seq()
+        var offset  = offsets(seq)
+        var idx     = 0
+        while (idx < newNodes.length) {
+          val nn = newNodes(idx)
+          nn match {
+            case generated: NewLocal =>
+              dstCast(offset) = generated.presenceCondition
+              offset += 1
+            case _ =>
+          }
+          assert(seq + idx == nn.storedRef.get.seq(), "internal consistency check")
+          idx += 1
+          offsets(idx + seq) = offset
+        }
+      }
+    }
     object NewNodeInserter_Local_typeFullName extends flatgraph.NewNodePropertyInsertionHelper {
       override def insertNewNodeProperties(
         newNodes: mutable.ArrayBuffer[flatgraph.DNode],
@@ -1590,6 +1615,7 @@ class NewLocal extends NewNode(nodeKind = 22) with LocalBase with AstNodeNew wit
   var offsetEnd: Option[Int]                             = None
   var order: Int                                         = -1: Int
   var possibleTypes: IndexedSeq[String]                  = ArraySeq.empty
+  var presenceCondition: String                          = "<empty>": String
   var typeFullName: String                               = "<empty>": String
   def closureBindingId(value: Option[String]): this.type = { this.closureBindingId = value; this }
   def closureBindingId(value: String): this.type         = { this.closureBindingId = Option(value); this }
@@ -1609,6 +1635,7 @@ class NewLocal extends NewNode(nodeKind = 22) with LocalBase with AstNodeNew wit
   def offsetEnd(value: Option[Int]): this.type              = { this.offsetEnd = value; this }
   def order(value: Int): this.type                          = { this.order = value; this }
   def possibleTypes(value: IterableOnce[String]): this.type = { this.possibleTypes = value.iterator.to(ArraySeq); this }
+  def presenceCondition(value: String): this.type           = { this.presenceCondition = value; this }
   def typeFullName(value: String): this.type                = { this.typeFullName = value; this }
   override def countAndVisitProperties(interface: flatgraph.BatchedUpdateInterface): Unit = {
     interface.countProperty(this, 6, closureBindingId.size)
@@ -1622,6 +1649,7 @@ class NewLocal extends NewNode(nodeKind = 22) with LocalBase with AstNodeNew wit
     interface.countProperty(this, 39, offsetEnd.size)
     interface.countProperty(this, 40, 1)
     interface.countProperty(this, 43, possibleTypes.size)
+    interface.countProperty(this, 44, 1)
     interface.countProperty(this, 49, 1)
   }
 
@@ -1638,6 +1666,7 @@ class NewLocal extends NewNode(nodeKind = 22) with LocalBase with AstNodeNew wit
     newInstance.offsetEnd = this.offsetEnd
     newInstance.order = this.order
     newInstance.possibleTypes = this.possibleTypes
+    newInstance.presenceCondition = this.presenceCondition
     newInstance.typeFullName = this.typeFullName
     newInstance.asInstanceOf[this.type]
   }
@@ -1655,7 +1684,8 @@ class NewLocal extends NewNode(nodeKind = 22) with LocalBase with AstNodeNew wit
       case 8  => "offsetEnd"
       case 9  => "order"
       case 10 => "possibleTypes"
-      case 11 => "typeFullName"
+      case 11 => "presenceCondition"
+      case 12 => "typeFullName"
       case _  => ""
     }
 
@@ -1672,11 +1702,12 @@ class NewLocal extends NewNode(nodeKind = 22) with LocalBase with AstNodeNew wit
       case 8  => this.offsetEnd
       case 9  => this.order
       case 10 => this.possibleTypes
-      case 11 => this.typeFullName
+      case 11 => this.presenceCondition
+      case 12 => this.typeFullName
       case _  => null
     }
 
   override def productPrefix                = "NewLocal"
-  override def productArity                 = 12
+  override def productArity                 = 13
   override def canEqual(that: Any): Boolean = that != null && that.isInstanceOf[NewLocal]
 }

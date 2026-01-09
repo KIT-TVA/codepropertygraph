@@ -1515,6 +1515,31 @@ object NewBlock {
         }
       }
     }
+    object NewNodeInserter_Block_presenceCondition extends flatgraph.NewNodePropertyInsertionHelper {
+      override def insertNewNodeProperties(
+        newNodes: mutable.ArrayBuffer[flatgraph.DNode],
+        dst: AnyRef,
+        offsets: Array[Int]
+      ): Unit = {
+        if (newNodes.isEmpty) return
+        val dstCast = dst.asInstanceOf[Array[String]]
+        val seq     = newNodes.head.storedRef.get.seq()
+        var offset  = offsets(seq)
+        var idx     = 0
+        while (idx < newNodes.length) {
+          val nn = newNodes(idx)
+          nn match {
+            case generated: NewBlock =>
+              dstCast(offset) = generated.presenceCondition
+              offset += 1
+            case _ =>
+          }
+          assert(seq + idx == nn.storedRef.get.seq(), "internal consistency check")
+          idx += 1
+          offsets(idx + seq) = offset
+        }
+      }
+    }
     object NewNodeInserter_Block_typeFullName extends flatgraph.NewNodePropertyInsertionHelper {
       override def insertNewNodeProperties(
         newNodes: mutable.ArrayBuffer[flatgraph.DNode],
@@ -1564,6 +1589,7 @@ class NewBlock extends NewNode(nodeKind = 6) with BlockBase with ExpressionNew {
   var offsetEnd: Option[Int]                         = None
   var order: Int                                     = -1: Int
   var possibleTypes: IndexedSeq[String]              = ArraySeq.empty
+  var presenceCondition: String                      = "<empty>": String
   var typeFullName: String                           = "<empty>": String
   def argumentIndex(value: Int): this.type           = { this.argumentIndex = value; this }
   def argumentName(value: Option[String]): this.type = { this.argumentName = value; this }
@@ -1582,6 +1608,7 @@ class NewBlock extends NewNode(nodeKind = 6) with BlockBase with ExpressionNew {
   def offsetEnd(value: Option[Int]): this.type              = { this.offsetEnd = value; this }
   def order(value: Int): this.type                          = { this.order = value; this }
   def possibleTypes(value: IterableOnce[String]): this.type = { this.possibleTypes = value.iterator.to(ArraySeq); this }
+  def presenceCondition(value: String): this.type           = { this.presenceCondition = value; this }
   def typeFullName(value: String): this.type                = { this.typeFullName = value; this }
   override def countAndVisitProperties(interface: flatgraph.BatchedUpdateInterface): Unit = {
     interface.countProperty(this, 1, 1)
@@ -1594,6 +1621,7 @@ class NewBlock extends NewNode(nodeKind = 6) with BlockBase with ExpressionNew {
     interface.countProperty(this, 39, offsetEnd.size)
     interface.countProperty(this, 40, 1)
     interface.countProperty(this, 43, possibleTypes.size)
+    interface.countProperty(this, 44, 1)
     interface.countProperty(this, 49, 1)
   }
 
@@ -1609,6 +1637,7 @@ class NewBlock extends NewNode(nodeKind = 6) with BlockBase with ExpressionNew {
     newInstance.offsetEnd = this.offsetEnd
     newInstance.order = this.order
     newInstance.possibleTypes = this.possibleTypes
+    newInstance.presenceCondition = this.presenceCondition
     newInstance.typeFullName = this.typeFullName
     newInstance.asInstanceOf[this.type]
   }
@@ -1625,7 +1654,8 @@ class NewBlock extends NewNode(nodeKind = 6) with BlockBase with ExpressionNew {
       case 7  => "offsetEnd"
       case 8  => "order"
       case 9  => "possibleTypes"
-      case 10 => "typeFullName"
+      case 10 => "presenceCondition"
+      case 11 => "typeFullName"
       case _  => ""
     }
 
@@ -1641,11 +1671,12 @@ class NewBlock extends NewNode(nodeKind = 6) with BlockBase with ExpressionNew {
       case 7  => this.offsetEnd
       case 8  => this.order
       case 9  => this.possibleTypes
-      case 10 => this.typeFullName
+      case 10 => this.presenceCondition
+      case 11 => this.typeFullName
       case _  => null
     }
 
   override def productPrefix                = "NewBlock"
-  override def productArity                 = 11
+  override def productArity                 = 12
   override def canEqual(that: Any): Boolean = that != null && that.isInstanceOf[NewBlock]
 }

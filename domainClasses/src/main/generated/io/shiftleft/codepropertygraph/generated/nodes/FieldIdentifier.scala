@@ -23,6 +23,7 @@ trait FieldIdentifierBase extends AbstractNode with ExpressionBase with StaticTy
     this.offset.foreach { p => res.put("OFFSET", p) }
     this.offsetEnd.foreach { p => res.put("OFFSET_END", p) }
     if ((-1: Int) != this.order) res.put("ORDER", this.order)
+    if (("<empty>": String) != this.presenceCondition) res.put("PRESENCE_CONDITION", this.presenceCondition)
     res
   }
 }
@@ -72,6 +73,9 @@ object FieldIdentifier {
   *
   * ▸ Order (Int); Cardinality `one` (mandatory with default value `-1`); This integer indicates the position of the
   * node among its siblings in the AST. The left-most child has an order of 0.
+  *
+  * ▸ PresenceCondition (String); Cardinality `one` (mandatory with default value `<empty>`); Marks outgoing edges with
+  * their presence conditions for variability, encoded in a string
   */
 class FieldIdentifier(graph_4762: flatgraph.Graph, seq_4762: Int)
     extends StoredNode(graph_4762, 13, seq_4762)
@@ -90,6 +94,7 @@ class FieldIdentifier(graph_4762: flatgraph.Graph, seq_4762: Int)
       case 6 => "offset"
       case 7 => "offsetEnd"
       case 8 => "order"
+      case 9 => "presenceCondition"
       case _ => ""
     }
 
@@ -104,11 +109,12 @@ class FieldIdentifier(graph_4762: flatgraph.Graph, seq_4762: Int)
       case 6 => this.offset
       case 7 => this.offsetEnd
       case 8 => this.order
+      case 9 => this.presenceCondition
       case _ => null
     }
 
   override def productPrefix = "FieldIdentifier"
-  override def productArity  = 9
+  override def productArity  = 10
 
   override def canEqual(that: Any): Boolean = that != null && that.isInstanceOf[FieldIdentifier]
 }

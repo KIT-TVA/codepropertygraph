@@ -1461,6 +1461,31 @@ object NewArrayInitializer {
         }
       }
     }
+    object NewNodeInserter_ArrayInitializer_presenceCondition extends flatgraph.NewNodePropertyInsertionHelper {
+      override def insertNewNodeProperties(
+        newNodes: mutable.ArrayBuffer[flatgraph.DNode],
+        dst: AnyRef,
+        offsets: Array[Int]
+      ): Unit = {
+        if (newNodes.isEmpty) return
+        val dstCast = dst.asInstanceOf[Array[String]]
+        val seq     = newNodes.head.storedRef.get.seq()
+        var offset  = offsets(seq)
+        var idx     = 0
+        while (idx < newNodes.length) {
+          val nn = newNodes(idx)
+          nn match {
+            case generated: NewArrayInitializer =>
+              dstCast(offset) = generated.presenceCondition
+              offset += 1
+            case _ =>
+          }
+          assert(seq + idx == nn.storedRef.get.seq(), "internal consistency check")
+          idx += 1
+          offsets(idx + seq) = offset
+        }
+      }
+    }
   }
 }
 
@@ -1483,6 +1508,7 @@ class NewArrayInitializer extends NewNode(nodeKind = 4) with ArrayInitializerBas
   var offset: Option[Int]                            = None
   var offsetEnd: Option[Int]                         = None
   var order: Int                                     = -1: Int
+  var presenceCondition: String                      = "<empty>": String
   def argumentIndex(value: Int): this.type           = { this.argumentIndex = value; this }
   def argumentName(value: Option[String]): this.type = { this.argumentName = value; this }
   def argumentName(value: String): this.type         = { this.argumentName = Option(value); this }
@@ -1496,6 +1522,7 @@ class NewArrayInitializer extends NewNode(nodeKind = 4) with ArrayInitializerBas
   def offsetEnd(value: Int): this.type               = { this.offsetEnd = Option(value); this }
   def offsetEnd(value: Option[Int]): this.type       = { this.offsetEnd = value; this }
   def order(value: Int): this.type                   = { this.order = value; this }
+  def presenceCondition(value: String): this.type    = { this.presenceCondition = value; this }
   override def countAndVisitProperties(interface: flatgraph.BatchedUpdateInterface): Unit = {
     interface.countProperty(this, 1, 1)
     interface.countProperty(this, 2, argumentName.size)
@@ -1505,6 +1532,7 @@ class NewArrayInitializer extends NewNode(nodeKind = 4) with ArrayInitializerBas
     interface.countProperty(this, 38, offset.size)
     interface.countProperty(this, 39, offsetEnd.size)
     interface.countProperty(this, 40, 1)
+    interface.countProperty(this, 44, 1)
   }
 
   override def copy: this.type = {
@@ -1517,6 +1545,7 @@ class NewArrayInitializer extends NewNode(nodeKind = 4) with ArrayInitializerBas
     newInstance.offset = this.offset
     newInstance.offsetEnd = this.offsetEnd
     newInstance.order = this.order
+    newInstance.presenceCondition = this.presenceCondition
     newInstance.asInstanceOf[this.type]
   }
 
@@ -1530,6 +1559,7 @@ class NewArrayInitializer extends NewNode(nodeKind = 4) with ArrayInitializerBas
       case 5 => "offset"
       case 6 => "offsetEnd"
       case 7 => "order"
+      case 8 => "presenceCondition"
       case _ => ""
     }
 
@@ -1543,10 +1573,11 @@ class NewArrayInitializer extends NewNode(nodeKind = 4) with ArrayInitializerBas
       case 5 => this.offset
       case 6 => this.offsetEnd
       case 7 => this.order
+      case 8 => this.presenceCondition
       case _ => null
     }
 
   override def productPrefix                = "NewArrayInitializer"
-  override def productArity                 = 8
+  override def productArity                 = 9
   override def canEqual(that: Any): Boolean = that != null && that.isInstanceOf[NewArrayInitializer]
 }

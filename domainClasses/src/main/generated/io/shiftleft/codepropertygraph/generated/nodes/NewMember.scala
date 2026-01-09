@@ -1561,6 +1561,31 @@ object NewMember {
         }
       }
     }
+    object NewNodeInserter_Member_presenceCondition extends flatgraph.NewNodePropertyInsertionHelper {
+      override def insertNewNodeProperties(
+        newNodes: mutable.ArrayBuffer[flatgraph.DNode],
+        dst: AnyRef,
+        offsets: Array[Int]
+      ): Unit = {
+        if (newNodes.isEmpty) return
+        val dstCast = dst.asInstanceOf[Array[String]]
+        val seq     = newNodes.head.storedRef.get.seq()
+        var offset  = offsets(seq)
+        var idx     = 0
+        while (idx < newNodes.length) {
+          val nn = newNodes(idx)
+          nn match {
+            case generated: NewMember =>
+              dstCast(offset) = generated.presenceCondition
+              offset += 1
+            case _ =>
+          }
+          assert(seq + idx == nn.storedRef.get.seq(), "internal consistency check")
+          idx += 1
+          offsets(idx + seq) = offset
+        }
+      }
+    }
     object NewNodeInserter_Member_typeFullName extends flatgraph.NewNodePropertyInsertionHelper {
       override def insertNewNodeProperties(
         newNodes: mutable.ArrayBuffer[flatgraph.DNode],
@@ -1612,6 +1637,7 @@ class NewMember extends NewNode(nodeKind = 23) with MemberBase with AstNodeNew w
   var offsetEnd: Option[Int]                      = None
   var order: Int                                  = -1: Int
   var possibleTypes: IndexedSeq[String]           = ArraySeq.empty
+  var presenceCondition: String                   = "<empty>": String
   var typeFullName: String                        = "<empty>": String
   def astParentFullName(value: String): this.type = { this.astParentFullName = value; this }
   def astParentType(value: String): this.type     = { this.astParentType = value; this }
@@ -1631,6 +1657,7 @@ class NewMember extends NewNode(nodeKind = 23) with MemberBase with AstNodeNew w
   def offsetEnd(value: Option[Int]): this.type              = { this.offsetEnd = value; this }
   def order(value: Int): this.type                          = { this.order = value; this }
   def possibleTypes(value: IterableOnce[String]): this.type = { this.possibleTypes = value.iterator.to(ArraySeq); this }
+  def presenceCondition(value: String): this.type           = { this.presenceCondition = value; this }
   def typeFullName(value: String): this.type                = { this.typeFullName = value; this }
   override def countAndVisitProperties(interface: flatgraph.BatchedUpdateInterface): Unit = {
     interface.countProperty(this, 3, 1)
@@ -1645,6 +1672,7 @@ class NewMember extends NewNode(nodeKind = 23) with MemberBase with AstNodeNew w
     interface.countProperty(this, 39, offsetEnd.size)
     interface.countProperty(this, 40, 1)
     interface.countProperty(this, 43, possibleTypes.size)
+    interface.countProperty(this, 44, 1)
     interface.countProperty(this, 49, 1)
   }
 
@@ -1662,6 +1690,7 @@ class NewMember extends NewNode(nodeKind = 23) with MemberBase with AstNodeNew w
     newInstance.offsetEnd = this.offsetEnd
     newInstance.order = this.order
     newInstance.possibleTypes = this.possibleTypes
+    newInstance.presenceCondition = this.presenceCondition
     newInstance.typeFullName = this.typeFullName
     newInstance.asInstanceOf[this.type]
   }
@@ -1680,7 +1709,8 @@ class NewMember extends NewNode(nodeKind = 23) with MemberBase with AstNodeNew w
       case 9  => "offsetEnd"
       case 10 => "order"
       case 11 => "possibleTypes"
-      case 12 => "typeFullName"
+      case 12 => "presenceCondition"
+      case 13 => "typeFullName"
       case _  => ""
     }
 
@@ -1698,11 +1728,12 @@ class NewMember extends NewNode(nodeKind = 23) with MemberBase with AstNodeNew w
       case 9  => this.offsetEnd
       case 10 => this.order
       case 11 => this.possibleTypes
-      case 12 => this.typeFullName
+      case 12 => this.presenceCondition
+      case 13 => this.typeFullName
       case _  => null
     }
 
   override def productPrefix                = "NewMember"
-  override def productArity                 = 13
+  override def productArity                 = 14
   override def canEqual(that: Any): Boolean = that != null && that.isInstanceOf[NewMember]
 }

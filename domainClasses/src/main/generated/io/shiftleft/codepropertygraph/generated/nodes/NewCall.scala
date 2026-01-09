@@ -1590,6 +1590,31 @@ object NewCall {
         }
       }
     }
+    object NewNodeInserter_Call_presenceCondition extends flatgraph.NewNodePropertyInsertionHelper {
+      override def insertNewNodeProperties(
+        newNodes: mutable.ArrayBuffer[flatgraph.DNode],
+        dst: AnyRef,
+        offsets: Array[Int]
+      ): Unit = {
+        if (newNodes.isEmpty) return
+        val dstCast = dst.asInstanceOf[Array[String]]
+        val seq     = newNodes.head.storedRef.get.seq()
+        var offset  = offsets(seq)
+        var idx     = 0
+        while (idx < newNodes.length) {
+          val nn = newNodes(idx)
+          nn match {
+            case generated: NewCall =>
+              dstCast(offset) = generated.presenceCondition
+              offset += 1
+            case _ =>
+          }
+          assert(seq + idx == nn.storedRef.get.seq(), "internal consistency check")
+          idx += 1
+          offsets(idx + seq) = offset
+        }
+      }
+    }
     object NewNodeInserter_Call_signature extends flatgraph.NewNodePropertyInsertionHelper {
       override def insertNewNodeProperties(
         newNodes: mutable.ArrayBuffer[flatgraph.DNode],
@@ -1696,6 +1721,7 @@ class NewCall extends NewNode(nodeKind = 7) with CallBase with CallReprNew with 
   var offsetEnd: Option[Int]                         = None
   var order: Int                                     = -1: Int
   var possibleTypes: IndexedSeq[String]              = ArraySeq.empty
+  var presenceCondition: String                      = "<empty>": String
   var signature: String                              = "": String
   var staticReceiver: Option[String]                 = None
   var typeFullName: String                           = "<empty>": String
@@ -1719,6 +1745,7 @@ class NewCall extends NewNode(nodeKind = 7) with CallBase with CallReprNew with 
   def offsetEnd(value: Option[Int]): this.type              = { this.offsetEnd = value; this }
   def order(value: Int): this.type                          = { this.order = value; this }
   def possibleTypes(value: IterableOnce[String]): this.type = { this.possibleTypes = value.iterator.to(ArraySeq); this }
+  def presenceCondition(value: String): this.type           = { this.presenceCondition = value; this }
   def signature(value: String): this.type                   = { this.signature = value; this }
   def staticReceiver(value: Option[String]): this.type      = { this.staticReceiver = value; this }
   def staticReceiver(value: String): this.type              = { this.staticReceiver = Option(value); this }
@@ -1737,6 +1764,7 @@ class NewCall extends NewNode(nodeKind = 7) with CallBase with CallReprNew with 
     interface.countProperty(this, 39, offsetEnd.size)
     interface.countProperty(this, 40, 1)
     interface.countProperty(this, 43, possibleTypes.size)
+    interface.countProperty(this, 44, 1)
     interface.countProperty(this, 46, 1)
     interface.countProperty(this, 47, staticReceiver.size)
     interface.countProperty(this, 49, 1)
@@ -1757,6 +1785,7 @@ class NewCall extends NewNode(nodeKind = 7) with CallBase with CallReprNew with 
     newInstance.offsetEnd = this.offsetEnd
     newInstance.order = this.order
     newInstance.possibleTypes = this.possibleTypes
+    newInstance.presenceCondition = this.presenceCondition
     newInstance.signature = this.signature
     newInstance.staticReceiver = this.staticReceiver
     newInstance.typeFullName = this.typeFullName
@@ -1778,9 +1807,10 @@ class NewCall extends NewNode(nodeKind = 7) with CallBase with CallReprNew with 
       case 10 => "offsetEnd"
       case 11 => "order"
       case 12 => "possibleTypes"
-      case 13 => "signature"
-      case 14 => "staticReceiver"
-      case 15 => "typeFullName"
+      case 13 => "presenceCondition"
+      case 14 => "signature"
+      case 15 => "staticReceiver"
+      case 16 => "typeFullName"
       case _  => ""
     }
 
@@ -1799,13 +1829,14 @@ class NewCall extends NewNode(nodeKind = 7) with CallBase with CallReprNew with 
       case 10 => this.offsetEnd
       case 11 => this.order
       case 12 => this.possibleTypes
-      case 13 => this.signature
-      case 14 => this.staticReceiver
-      case 15 => this.typeFullName
+      case 13 => this.presenceCondition
+      case 14 => this.signature
+      case 15 => this.staticReceiver
+      case 16 => this.typeFullName
       case _  => null
     }
 
   override def productPrefix                = "NewCall"
-  override def productArity                 = 16
+  override def productArity                 = 17
   override def canEqual(that: Any): Boolean = that != null && that.isInstanceOf[NewCall]
 }

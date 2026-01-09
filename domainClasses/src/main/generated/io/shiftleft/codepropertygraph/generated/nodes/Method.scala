@@ -43,6 +43,7 @@ trait MethodBase extends AbstractNode with CfgNodeBase with DeclarationBase with
     this.offset.foreach { p => res.put("OFFSET", p) }
     this.offsetEnd.foreach { p => res.put("OFFSET_END", p) }
     if ((-1: Int) != this.order) res.put("ORDER", this.order)
+    if (("<empty>": String) != this.presenceCondition) res.put("PRESENCE_CONDITION", this.presenceCondition)
     if (("": String) != this.signature) res.put("SIGNATURE", this.signature)
     res
   }
@@ -116,6 +117,9 @@ object Method {
   * ▸ Order (Int); Cardinality `one` (mandatory with default value `-1`); This integer indicates the position of the
   * node among its siblings in the AST. The left-most child has an order of 0.
   *
+  * ▸ PresenceCondition (String); Cardinality `one` (mandatory with default value `<empty>`); Marks outgoing edges with
+  * their presence conditions for variability, encoded in a string
+  *
   * ▸ Signature (String); Cardinality `one` (mandatory with default value ``); The method signature encodes the types of
   * parameters in a string. The string SHOULD be human readable and suitable for differentiating methods with different
   * parameter types sufficiently to allow for resolving of function overloading. The present specification does not
@@ -147,7 +151,8 @@ class Method(graph_4762: flatgraph.Graph, seq_4762: Int)
       case 13 => "offset"
       case 14 => "offsetEnd"
       case 15 => "order"
-      case 16 => "signature"
+      case 16 => "presenceCondition"
+      case 17 => "signature"
       case _  => ""
     }
 
@@ -169,12 +174,13 @@ class Method(graph_4762: flatgraph.Graph, seq_4762: Int)
       case 13 => this.offset
       case 14 => this.offsetEnd
       case 15 => this.order
-      case 16 => this.signature
+      case 16 => this.presenceCondition
+      case 17 => this.signature
       case _  => null
     }
 
   override def productPrefix = "Method"
-  override def productArity  = 17
+  override def productArity  = 18
 
   override def canEqual(that: Any): Boolean = that != null && that.isInstanceOf[Method]
 }

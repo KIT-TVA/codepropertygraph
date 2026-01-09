@@ -31,6 +31,7 @@ trait MethodReturnBase extends AbstractNode with CfgNodeBase with StaticType[Met
     if ((-1: Int) != this.order) res.put("ORDER", this.order)
     val tmpPossibleTypes = this.possibleTypes;
     if (tmpPossibleTypes.nonEmpty) res.put("POSSIBLE_TYPES", tmpPossibleTypes)
+    if (("<empty>": String) != this.presenceCondition) res.put("PRESENCE_CONDITION", this.presenceCondition)
     if (("<empty>": String) != this.typeFullName) res.put("TYPE_FULL_NAME", this.typeFullName)
     res
   }
@@ -77,6 +78,9 @@ object MethodReturn {
   * no guarantee that types within this property are correct. This property is used to capture observations between node
   * interactions during a 'may-analysis'.
   *
+  * ▸ PresenceCondition (String); Cardinality `one` (mandatory with default value `<empty>`); Marks outgoing edges with
+  * their presence conditions for variability, encoded in a string
+  *
   * ▸ TypeFullName (String); Cardinality `one` (mandatory with default value `<empty>`); This field contains the
   * fully-qualified static type name of the program construct represented by a node. It is the name of an instantiated
   * type, e.g., `java.util.List<Integer>`, rather than `java.util.List[T]`. If the type cannot be determined, this field
@@ -90,36 +94,38 @@ class MethodReturn(graph_4762: flatgraph.Graph, seq_4762: Int)
 
   override def productElementName(n: Int): String =
     n match {
-      case 0 => "code"
-      case 1 => "columnNumber"
-      case 2 => "dynamicTypeHintFullName"
-      case 3 => "evaluationStrategy"
-      case 4 => "lineNumber"
-      case 5 => "offset"
-      case 6 => "offsetEnd"
-      case 7 => "order"
-      case 8 => "possibleTypes"
-      case 9 => "typeFullName"
-      case _ => ""
+      case 0  => "code"
+      case 1  => "columnNumber"
+      case 2  => "dynamicTypeHintFullName"
+      case 3  => "evaluationStrategy"
+      case 4  => "lineNumber"
+      case 5  => "offset"
+      case 6  => "offsetEnd"
+      case 7  => "order"
+      case 8  => "possibleTypes"
+      case 9  => "presenceCondition"
+      case 10 => "typeFullName"
+      case _  => ""
     }
 
   override def productElement(n: Int): Any =
     n match {
-      case 0 => this.code
-      case 1 => this.columnNumber
-      case 2 => this.dynamicTypeHintFullName
-      case 3 => this.evaluationStrategy
-      case 4 => this.lineNumber
-      case 5 => this.offset
-      case 6 => this.offsetEnd
-      case 7 => this.order
-      case 8 => this.possibleTypes
-      case 9 => this.typeFullName
-      case _ => null
+      case 0  => this.code
+      case 1  => this.columnNumber
+      case 2  => this.dynamicTypeHintFullName
+      case 3  => this.evaluationStrategy
+      case 4  => this.lineNumber
+      case 5  => this.offset
+      case 6  => this.offsetEnd
+      case 7  => this.order
+      case 8  => this.possibleTypes
+      case 9  => this.presenceCondition
+      case 10 => this.typeFullName
+      case _  => null
     }
 
   override def productPrefix = "MethodReturn"
-  override def productArity  = 10
+  override def productArity  = 11
 
   override def canEqual(that: Any): Boolean = that != null && that.isInstanceOf[MethodReturn]
 }

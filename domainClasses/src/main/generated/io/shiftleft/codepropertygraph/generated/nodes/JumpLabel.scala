@@ -22,6 +22,7 @@ trait JumpLabelBase extends AbstractNode with AstNodeBase with StaticType[JumpLa
     this.offsetEnd.foreach { p => res.put("OFFSET_END", p) }
     if ((-1: Int) != this.order) res.put("ORDER", this.order)
     if (("<empty>": String) != this.parserTypeName) res.put("PARSER_TYPE_NAME", this.parserTypeName)
+    if (("<empty>": String) != this.presenceCondition) res.put("PRESENCE_CONDITION", this.presenceCondition)
     res
   }
 }
@@ -59,6 +60,9 @@ object JumpLabel {
   *
   * ▸ ParserTypeName (String); Cardinality `one` (mandatory with default value `<empty>`); AST node type name emitted by
   * parser.
+  *
+  * ▸ PresenceCondition (String); Cardinality `one` (mandatory with default value `<empty>`); Marks outgoing edges with
+  * their presence conditions for variability, encoded in a string
   */
 class JumpLabel(graph_4762: flatgraph.Graph, seq_4762: Int)
     extends StoredNode(graph_4762, 18, seq_4762)
@@ -76,6 +80,7 @@ class JumpLabel(graph_4762: flatgraph.Graph, seq_4762: Int)
       case 5 => "offsetEnd"
       case 6 => "order"
       case 7 => "parserTypeName"
+      case 8 => "presenceCondition"
       case _ => ""
     }
 
@@ -89,11 +94,12 @@ class JumpLabel(graph_4762: flatgraph.Graph, seq_4762: Int)
       case 5 => this.offsetEnd
       case 6 => this.order
       case 7 => this.parserTypeName
+      case 8 => this.presenceCondition
       case _ => null
     }
 
   override def productPrefix = "JumpLabel"
-  override def productArity  = 8
+  override def productArity  = 9
 
   override def canEqual(that: Any): Boolean = that != null && that.isInstanceOf[JumpLabel]
 }

@@ -43,6 +43,7 @@ trait MethodParameterInBase
     if ((-1: Int) != this.order) res.put("ORDER", this.order)
     val tmpPossibleTypes = this.possibleTypes;
     if (tmpPossibleTypes.nonEmpty) res.put("POSSIBLE_TYPES", tmpPossibleTypes)
+    if (("<empty>": String) != this.presenceCondition) res.put("PRESENCE_CONDITION", this.presenceCondition)
     if (("<empty>": String) != this.typeFullName) res.put("TYPE_FULL_NAME", this.typeFullName)
     res
   }
@@ -103,6 +104,9 @@ object MethodParameterIn {
   * no guarantee that types within this property are correct. This property is used to capture observations between node
   * interactions during a 'may-analysis'.
   *
+  * ▸ PresenceCondition (String); Cardinality `one` (mandatory with default value `<empty>`); Marks outgoing edges with
+  * their presence conditions for variability, encoded in a string
+  *
   * ▸ TypeFullName (String); Cardinality `one` (mandatory with default value `<empty>`); This field contains the
   * fully-qualified static type name of the program construct represented by a node. It is the name of an instantiated
   * type, e.g., `java.util.List<Integer>`, rather than `java.util.List[T]`. If the type cannot be determined, this field
@@ -130,7 +134,8 @@ class MethodParameterIn(graph_4762: flatgraph.Graph, seq_4762: Int)
       case 10 => "offsetEnd"
       case 11 => "order"
       case 12 => "possibleTypes"
-      case 13 => "typeFullName"
+      case 13 => "presenceCondition"
+      case 14 => "typeFullName"
       case _  => ""
     }
 
@@ -149,12 +154,13 @@ class MethodParameterIn(graph_4762: flatgraph.Graph, seq_4762: Int)
       case 10 => this.offsetEnd
       case 11 => this.order
       case 12 => this.possibleTypes
-      case 13 => this.typeFullName
+      case 13 => this.presenceCondition
+      case 14 => this.typeFullName
       case _  => null
     }
 
   override def productPrefix = "MethodParameterIn"
-  override def productArity  = 14
+  override def productArity  = 15
 
   override def canEqual(that: Any): Boolean = that != null && that.isInstanceOf[MethodParameterIn]
 }

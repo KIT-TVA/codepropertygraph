@@ -24,6 +24,7 @@ trait AnnotationBase extends AbstractNode with ExpressionBase with StaticType[An
     this.offset.foreach { p => res.put("OFFSET", p) }
     this.offsetEnd.foreach { p => res.put("OFFSET_END", p) }
     if ((-1: Int) != this.order) res.put("ORDER", this.order)
+    if (("<empty>": String) != this.presenceCondition) res.put("PRESENCE_CONDITION", this.presenceCondition)
     res
   }
 }
@@ -73,6 +74,9 @@ object Annotation {
   *
   * ▸ Order (Int); Cardinality `one` (mandatory with default value `-1`); This integer indicates the position of the
   * node among its siblings in the AST. The left-most child has an order of 0.
+  *
+  * ▸ PresenceCondition (String); Cardinality `one` (mandatory with default value `<empty>`); Marks outgoing edges with
+  * their presence conditions for variability, encoded in a string
   */
 class Annotation(graph_4762: flatgraph.Graph, seq_4762: Int)
     extends StoredNode(graph_4762, 0, seq_4762)
@@ -82,36 +86,38 @@ class Annotation(graph_4762: flatgraph.Graph, seq_4762: Int)
 
   override def productElementName(n: Int): String =
     n match {
-      case 0 => "argumentIndex"
-      case 1 => "argumentName"
-      case 2 => "code"
-      case 3 => "columnNumber"
-      case 4 => "fullName"
-      case 5 => "lineNumber"
-      case 6 => "name"
-      case 7 => "offset"
-      case 8 => "offsetEnd"
-      case 9 => "order"
-      case _ => ""
+      case 0  => "argumentIndex"
+      case 1  => "argumentName"
+      case 2  => "code"
+      case 3  => "columnNumber"
+      case 4  => "fullName"
+      case 5  => "lineNumber"
+      case 6  => "name"
+      case 7  => "offset"
+      case 8  => "offsetEnd"
+      case 9  => "order"
+      case 10 => "presenceCondition"
+      case _  => ""
     }
 
   override def productElement(n: Int): Any =
     n match {
-      case 0 => this.argumentIndex
-      case 1 => this.argumentName
-      case 2 => this.code
-      case 3 => this.columnNumber
-      case 4 => this.fullName
-      case 5 => this.lineNumber
-      case 6 => this.name
-      case 7 => this.offset
-      case 8 => this.offsetEnd
-      case 9 => this.order
-      case _ => null
+      case 0  => this.argumentIndex
+      case 1  => this.argumentName
+      case 2  => this.code
+      case 3  => this.columnNumber
+      case 4  => this.fullName
+      case 5  => this.lineNumber
+      case 6  => this.name
+      case 7  => this.offset
+      case 8  => this.offsetEnd
+      case 9  => this.order
+      case 10 => this.presenceCondition
+      case _  => null
     }
 
   override def productPrefix = "Annotation"
-  override def productArity  = 10
+  override def productArity  = 11
 
   override def canEqual(that: Any): Boolean = that != null && that.isInstanceOf[Annotation]
 }

@@ -35,6 +35,7 @@ trait LocalBase extends AbstractNode with AstNodeBase with DeclarationBase with 
     if ((-1: Int) != this.order) res.put("ORDER", this.order)
     val tmpPossibleTypes = this.possibleTypes;
     if (tmpPossibleTypes.nonEmpty) res.put("POSSIBLE_TYPES", tmpPossibleTypes)
+    if (("<empty>": String) != this.presenceCondition) res.put("PRESENCE_CONDITION", this.presenceCondition)
     if (("<empty>": String) != this.typeFullName) res.put("TYPE_FULL_NAME", this.typeFullName)
     res
   }
@@ -86,6 +87,9 @@ object Local {
   * no guarantee that types within this property are correct. This property is used to capture observations between node
   * interactions during a 'may-analysis'.
   *
+  * ▸ PresenceCondition (String); Cardinality `one` (mandatory with default value `<empty>`); Marks outgoing edges with
+  * their presence conditions for variability, encoded in a string
+  *
   * ▸ TypeFullName (String); Cardinality `one` (mandatory with default value `<empty>`); This field contains the
   * fully-qualified static type name of the program construct represented by a node. It is the name of an instantiated
   * type, e.g., `java.util.List<Integer>`, rather than `java.util.List[T]`. If the type cannot be determined, this field
@@ -111,7 +115,8 @@ class Local(graph_4762: flatgraph.Graph, seq_4762: Int)
       case 8  => "offsetEnd"
       case 9  => "order"
       case 10 => "possibleTypes"
-      case 11 => "typeFullName"
+      case 11 => "presenceCondition"
+      case 12 => "typeFullName"
       case _  => ""
     }
 
@@ -128,12 +133,13 @@ class Local(graph_4762: flatgraph.Graph, seq_4762: Int)
       case 8  => this.offsetEnd
       case 9  => this.order
       case 10 => this.possibleTypes
-      case 11 => this.typeFullName
+      case 11 => this.presenceCondition
+      case 12 => this.typeFullName
       case _  => null
     }
 
   override def productPrefix = "Local"
-  override def productArity  = 12
+  override def productArity  = 13
 
   override def canEqual(that: Any): Boolean = that != null && that.isInstanceOf[Local]
 }

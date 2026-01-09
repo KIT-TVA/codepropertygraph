@@ -87,7 +87,7 @@ object Ast extends SchemaBase {
                     |`FILE` nodes `CONTENT` property.
                     |""".stripMargin
       )
-      .addProperties(order, code)
+      .addProperties(order, code, presenceCondition)
       .addProperties(lineNumber, columnNumber, offset, offsetEnd)
 
     // The following nodes from other schemas are AST nodes

@@ -476,10 +476,6 @@ object Accessors {
       case stored: nodes.StoredNode           => new AccessPropertyParserTypeName(stored).parserTypeName
       case newNode: nodes.NewControlStructure => newNode.parserTypeName
     }
-    def presenceCondition: String = node match {
-      case stored: nodes.StoredNode           => new AccessPropertyPresenceCondition(stored).presenceCondition
-      case newNode: nodes.NewControlStructure => newNode.presenceCondition
-    }
   }
   final class AccessDependencyBase(val node: nodes.DependencyBase) extends AnyVal {
     def dependencyGroupId: Option[String] = node match {
@@ -968,6 +964,10 @@ object Accessors {
     def order: Int = node match {
       case stored: nodes.StoredNode  => new AccessPropertyOrder(stored).order
       case newNode: nodes.AstNodeNew => newNode.order
+    }
+    def presenceCondition: String = node match {
+      case stored: nodes.StoredNode  => new AccessPropertyPresenceCondition(stored).presenceCondition
+      case newNode: nodes.AstNodeNew => newNode.presenceCondition
     }
   }
   final class AccessCallreprBase(val node: nodes.CallReprBase) extends AnyVal {
