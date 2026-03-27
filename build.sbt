@@ -6,6 +6,7 @@ val flatgraphVersion = "0.1.25"
 inThisBuild(
   List(
     organization       := "io.shiftleft",
+    version            := "0.1-SNAPSHOT",
     scalaVersion       := "3.6.4",
     resolvers ++= Seq(Resolver.mavenLocal, "Sonatype OSS" at "https://oss.sonatype.org/content/repositories/public"),
     packageDoc / publishArtifact := true,
