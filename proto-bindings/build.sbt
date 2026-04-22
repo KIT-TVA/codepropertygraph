@@ -37,6 +37,7 @@ installProtoc := {
       case ("Linux", "amd64")                                                      => "linux-x86_64"
       case (name, "amd64") if name.startsWith("Windows")                           => "win64"
       case (name, arch) if name.toLowerCase.contains("mac") && arch.contains("64") => "osx-x86_64"
+      case ("Linux", "aarch64")							   => "linux-aarch_64"
       case (name, arch) =>
         throw new AssertionError(
           s"unknown platform name/arch ($name/$arch), please add in `proto-bindings/build.sbt` match"
